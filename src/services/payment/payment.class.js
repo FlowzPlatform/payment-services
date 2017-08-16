@@ -1,7 +1,7 @@
 const Ajv = require('ajv');
 const configParams = require("../../config.js");
 let _ = require("lodash")
-const schema = require("./config/schema.js")
+const schema = require("./schema/schema.js")
     //console.log(schema.stripe_payment_charge_schema)
     //return;
     //console.log(_)
