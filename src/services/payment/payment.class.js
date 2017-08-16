@@ -2,9 +2,9 @@ const Ajv = require('ajv');
 const configParams = require("../../config.js");
 let _ = require("lodash")
 const schema = require("./config/schema.js")
-//console.log(schema.stripe_payment_charge_schema)
-//return;
-//console.log(_)
+    //console.log(schema.stripe_payment_charge_schema)
+    //return;
+    //console.log(_)
 let feathersErrors = require('feathers-errors');
 let errors = feathersErrors.errors;
 //let stripeConfig = require("../../config/stripe/stripeConfig");
@@ -14,8 +14,7 @@ let availableGateways = ["paypal", "stripe", "authorizeDotNet"];
 console.log("stripe config..");
 console.log(configParams.gateway.stripe.secret_key)
 let stripe = require("stripe")(
-  configParams.gateway.stripe.secret_key
-  //"sk_test_V8ZICJodc73pjyGVBBzA0Dkb"
+    configParams.gateway.stripe.secret_key
 );
 
 let ajv = new Ajv({
@@ -48,172 +47,157 @@ let stripe_payment_charge_schema = {
 
 /* eslint-disable no-unused-vars */
 class Service {
-  constructor (options) {
-    console.log("inside cons..");
-    console.log(options)
-    //const Ajv = require('ajv');
-    this.options = options || {};
-  }
-
-  find (params) {
-
-    console.log("inside..");
-    //console.log(params);
-
-    let schemaName = eval("schema." + params.query.gateway + "_payment_charge_find_schema");
-    //console.log(schemaName)
-    this.validateSchema(params.query, schemaName)
-
-    let response = this.retrieveCharge(params.query);
-
-    return response;
-
-    //return Promise.resolve([]);
-  }
-
-  get (id, params) {
-    return Promise.resolve({
-      id, text: `A new message with ID: ${id}!`
-    });
-  }
-
-  create (data, params)
-  {
-    let schemaName = eval("schema." + data.gateway + "_payment_charge_schema");
-    //this.validate(data);
-    this.validateSchema(data, schemaName)
-    let response = this.charge(data);
-    //console.log(response)
-
-    return response;
-    // if (Array.isArray(data))
-    // {
-    //   return Promise.all(data.map(current => this.create(current)));
-    //   //return Promise.all(data.map(current => this.create(current)));
-    // }
-    //
-  }
-
-  validateSchema(data, schemaName)
-  {
-    console.log(schemaName)
-    let validateSc = ajv.compile(schemaName);
-    let valid = validateSc(data);
-
-    if (!valid)
-    {
-      throw new errors.NotAcceptable('user input not valid', validateSc.errors);
+    constructor(options) {
+        console.log("inside cons..");
+        console.log(options)
+            //const Ajv = require('ajv');
+        this.options = options || {};
     }
-  }
 
-  validate(data)
-  {
-    /*
-    if(!data.gateway)
-    {
-      throw new errors.NotAcceptable('please provide gateway');
+    find(params) {
+
+        console.log("inside..");
+        //console.log(params);
+
+        let schemaName = eval("schema." + params.query.gateway + "_payment_charge_find_schema");
+        //console.log(schemaName)
+        this.validateSchema(params.query, schemaName)
+
+        var retrieveCharge = eval("this." + params.query.gateway + "RetrieveCharge")
+
+        let response = retrieveCharge(params.query);
+        console.log("charges  :: " + response);
+
+        //let response = this.retrieveCharge(params.query);
+
+        return response;
+
+        //return Promise.resolve([]);
     }
-    let isGatewayAvail = _.indexOf(availableGateways, data.gateway)
 
-    if(isGatewayAvail < 0)
-    {
-      throw new errors.NotAcceptable('gateway not valid');
-    }*/
-    let gatewayUsed = eval("schema." + data.gateway + "_payment_charge_schema");
-  //  console.log(gatewayUsed);
-    let validate = ajv.compile(gatewayUsed);
-    let valid = validate(data);
-    if (!valid)
-    {
-      throw new errors.NotAcceptable('user input not valid', validate.errors);
+    get(id, params) {
+        return Promise.resolve({
+            id,
+            text: `A new message with ID: ${id}!`
+        });
     }
-  }
 
-  charge(data)
-  {
-    console.log("inside charge..");
+    create(data, params) {
+        let schemaName = eval("schema." + data.gateway + "_payment_charge_schema");
+        //this.validate(data);
+        this.validateSchema(data, schemaName)
+        let response = this.charge(data);
+        //console.log(response)
 
-    return new Promise ((resolve , reject) => {
+        return response;
+        // if (Array.isArray(data))
+        // {
+        //   return Promise.all(data.map(current => this.create(current)));
+        //   //return Promise.all(data.map(current => this.create(current)));
+        // }
+        //
+    }
 
-      stripe.charges.create({
-        amount: data.amount,
-        currency: data.currency,
-        description: data.description,
-        customer: data.customerId
-      }, function(err, charge) {
-        // asynchronously called
-        console.log(charge)
-        //console.log('1212');
+    validateSchema(data, schemaName) {
+        console.log(schemaName)
+        let validateSc = ajv.compile(schemaName);
+        let valid = validateSc(data);
 
-        resolve(charge)
-      });
-    })
-  }
+        if (!valid) {
+            throw new errors.NotAcceptable('user input not valid', validateSc.errors);
+        }
+    }
 
-  stripeCreateCharge(data)
-  {
+    validate(data) {
+        /*
+        if(!data.gateway)
+        {
+          throw new errors.NotAcceptable('please provide gateway');
+        }
+        let isGatewayAvail = _.indexOf(availableGateways, data.gateway)
 
-  }
+        if(isGatewayAvail < 0)
+        {
+          throw new errors.NotAcceptable('gateway not valid');
+        }*/
+        let gatewayUsed = eval("schema." + data.gateway + "_payment_charge_schema");
+        //  console.log(gatewayUsed);
+        let validate = ajv.compile(gatewayUsed);
+        let valid = validate(data);
+        if (!valid) {
+            throw new errors.NotAcceptable('user input not valid', validate.errors);
+        }
+    }
 
-  async retrieveCharge(data)
-  {
-    console.log("inside retreive charge.."+JSON.stringify(data));
+    charge(data) {
+        console.log("inside charge..");
 
-    let charges = await this.stripeRetrieveCharge(data);
-    console.log("charges  :: "+charges);
-    return charges;
-  }
+        return new Promise((resolve, reject) => {
 
-  stripeRetrieveCharge(data)
-  {
-    console.log(1212);
-    return new Promise ((resolve , reject) => {
+            stripe.charges.create({
+                amount: data.amount,
+                currency: data.currency,
+                description: data.description,
+                customer: data.customerId
+            }, function(err, charge) {
+                // asynchronously called
+                console.log(charge)
+                    //console.log('1212');
 
-      if(!_.has(data, 'chargeId') && _.has(data, 'gateway'))
-      {
-        stripe.charges.list(
-          {
-            customer: data.customerId
-          },
-          function(err, charges) {
-            // asynchronously called
-            resolve(charges)
-            //return charges;
-          }
-        );
-      }
-      else if (_.has(data, 'gateway') && _.has(data, 'chargeId'))
-      {
-        console.log("11");
-        stripe.charges.retrieve(
-          data.chargeId,
-          function(err, charge) {
-            // asynchronously called
-            resolve(charge)
-      //return charge;
-          }
-        );
+                resolve(charge)
+            });
+        })
+    }
 
-      }
+    stripeCreateCharge(data) {
 
-    })
-  }
+    }
 
-  update (id, data, params) {
-    return Promise.resolve(data);
-  }
+    stripeRetrieveCharge(data) {
+        console.log(1212);
+        return new Promise((resolve, reject) => {
 
-  patch (id, data, params) {
-    return Promise.resolve(data);
-  }
+            if (!_.has(data, 'chargeId') && _.has(data, 'gateway')) {
+                stripe.charges.list({
+                        customer: data.customerId
+                    },
+                    function(err, charges) {
+                        // asynchronously called
+                        resolve(charges)
+                            //return charges;
+                    }
+                );
+            } else if (_.has(data, 'gateway') && _.has(data, 'chargeId')) {
+                console.log("11");
+                stripe.charges.retrieve(
+                    data.chargeId,
+                    function(err, charge) {
+                        // asynchronously called
+                        resolve(charge)
+                            //return charge;
+                    }
+                );
 
-  remove (id, params) {
-    return Promise.resolve({ id });
-  }
+            }
+
+        })
+    }
+
+    update(id, data, params) {
+        return Promise.resolve(data);
+    }
+
+    patch(id, data, params) {
+        return Promise.resolve(data);
+    }
+
+    remove(id, params) {
+        return Promise.resolve({ id });
+    }
 }
 
-module.exports = function (options) {
-  return new Service(options);
+module.exports = function(options) {
+    return new Service(options);
 };
 
 module.exports.Service = Service;
