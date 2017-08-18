@@ -8,64 +8,7 @@ let stripe = require("stripe")(
 
  let availableGateways = ["paypal", "stripe", "authorizeDotNet"];
 
-let stripe_customer_create_schema = {
-    "properties": {
-      "gateway": {
-          "type": "string",
-          "enum": ["stripe", "authrizeDotNet"]
-      },
-        "cardNumber": {
-           "description": "card Nunber"
-        },
-        "expMonth": {
-            "description": "card expiry month"
-        },
-        "expYear": {
-            "description": "card expiry year"
-
-        },
-        "cvc": {
-            "description": "CVC in Number",
-            "type": "number"
-        },
-        "desc": {
-            "description": "Customer description in String",
-            "type": "string"
-        },
-        "email": {
-            "description": "email  in String",
-            "type": "string"
-        }
-    },
-    "required": ["cardNumber" , "gateway" , "expMonth" , "expYear" ,  "cvc"]
-}
-
-
-let stripe_customer_get_schema = {
-    "properties": {
-      "gateway": {
-          "type": "string",
-          "enum": ["stripe", "authrizeDotNet"]
-      },
-        "id": {
-            "type": "string"
-        }
-    },
-    "required": ["id" , "gateway" ]
-}
-
-let stripe_customer_delete_schema = {
-    "properties": {
-      "gateway": {
-          "type": "string",
-          "enum": ["stripe", "authrizeDotNet"]
-      },
-        "id": {
-            "type": "string"
-        }
-    },
-    "required": ["id" , "gateway" ]
-}
+let schema = require("./schema/schema.js")
 
 
 module.exports = {
@@ -188,9 +131,10 @@ function before_find_customer(hook) {
 
 before_create_customer = hook => {
 
-  let gatewayUsed = eval(hook.data.gateway + "_customer_create_schema");
+  let gatewayUsed = eval("schema."+hook.data.gateway + "_customer_create_schema");
   let validate = ajv.compile(gatewayUsed);
   let valid = validate(hook.data);
+  console.log("########################   ::::::::::" , valid);
   if (!valid)
   {
     throw new errors.NotAcceptable('user input not valid', validate.errors);
@@ -215,7 +159,6 @@ after_create_customer = hook => {
    }, function(err, token) {
      //console.log(token);
      console.log("error ", err);
-
      if (token) {
        stripe.customers.create({
           description: 'Customer for liam.moore@example.com',

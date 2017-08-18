@@ -8,83 +8,7 @@ let stripe = require("stripe")(
 );
 const config = require('config');
 
-let stripe_plan_create_schema = {
-    "properties": {
-        "gateway": {
-            "type": "string",
-            "enum": ["stripe", "authrizeDotNet"]
-        },
-        "name": {
-            "description": "plan Name in String",
-            "type": "string"
-        },
-
-        "currency": {
-            "description": "currency in string",
-            "type": "string",
-            "enum": ["USD", "INR"]
-        },
-        "interval": {
-            "description": "interval in string",
-            "type": "string"
-            //,"enum": ["d", "w", "m", "y"]
-        },
-        "interval-count": {
-            "description": "interval count in Integer",
-            "type": "integer"
-        },
-        "amount": {
-            "description": "amount must be Integer",
-            "type": "integer"
-        }
-    },
-    "required": ["gateway", "name", "amount", "currency", "interval", "interval-count"]
-}
-
-
-
-let stripe_plan_update_schema = {    // can update only plan name field
-    "properties": {
-      "gateway": {
-          "type": "string",
-          "enum": ["stripe", "authrizeDotNet"]
-      },
-        "id": {
-            "type": "string"
-        },
-        "name": {
-            "description": "plan Name in String",
-            "type": "string"
-        }
-    },
-    "required": ["id" , "gateway" , "name"]
-}
-
-let stripe_plan_delete_schema = {
-    "properties": {
-      "gateway": {
-          "type": "string",
-          "enum": ["stripe", "authrizeDotNet"]
-      },
-        "id": {
-            "type": "string"
-        }
-    },
-    "required": ["id" , "gateway" ]
-}
-
-let stripe_plan_get_schema = {
-    "properties": {
-      "gateway": {
-          "type": "string",
-          "enum": ["stripe", "authrizeDotNet"]
-      },
-        "id": {
-            "type": "string"
-        }
-    },
-    "required": ["id" , "gateway" ]
-}
+let schema = require("./schema/schema.js")
 
 let availableGateways = ["paypal", "stripe", "authorizeDotNet"];
 
@@ -165,7 +89,7 @@ before_all_hook_plan = async hook => {
 
 async function before_create_plan_schema_validation(hook) {
     hook.result = hook.data ;
-    let gatewayUsed = eval(hook.data.gateway + "_plan_create_schema");
+    let gatewayUsed = eval("schema."+hook.data.gateway + "_plan_create_schema");
     let validate = ajv.compile(gatewayUsed);
     let valid = validate(hook.data);
     if (!valid)
@@ -217,7 +141,7 @@ async function modify_plan_id_func(hook, gateway, name) {
  function after_create_plan_schema_validation(hook) {
   return new Promise((resolve, reject) => {
 
-    let gatewayUsed = eval(hook.data.gateway + "_plan_create_schema");
+    let gatewayUsed = eval("schema."+hook.data.gateway + "_plan_create_schema");
     let validate = ajv.compile(gatewayUsed);
     let valid = validate(hook.data);
     if (!valid)
@@ -267,7 +191,7 @@ function before_find_plan(hook) {
          }
        );
      }else if (_.has(myObj, 'gateway') && _.has(myObj, 'id')){
-       let gatewayUsed = eval(hook.params.query.gateway + "_plan_get_schema");
+       let gatewayUsed = eval("schema."+hook.params.query.gateway + "_plan_get_schema");
        let validate = ajv.compile(gatewayUsed);
        let valid = validate(hook.params.query);
        if (!valid)
@@ -298,7 +222,7 @@ function before_update_plan(hook) {
     return new Promise((resolve, reject) => {
      let stripe_interval =   modify_interval_func(hook.data.gateway ,hook.data.interval);
      console.log(stripe_interval);
-      let gatewayUsed = eval(hook.data.gateway + "_plan_update_schema");
+      let gatewayUsed = eval("schema."+hook.data.gateway + "_plan_update_schema");
       let validate = ajv.compile(gatewayUsed);
       let valid = validate(hook.data);
       if (!valid)
@@ -326,7 +250,7 @@ function before_update_plan(hook) {
 function before_delete_plan (hook) {
   console.log(hook);
   return new Promise((resolve, reject) => {
-    let gatewayUsed = eval(hook.params.query.gateway + "_plan_delete_schema");
+    let gatewayUsed = eval("schema."+hook.params.query.gateway + "_plan_delete_schema");
     let validate = ajv.compile(gatewayUsed);
     let valid = validate(hook.params.query);
     if (!valid)

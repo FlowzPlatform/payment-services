@@ -5,6 +5,7 @@ class Service {
   }
 
   find (params) {
+    console.log("subscription find class");
     return Promise.resolve([]);
   }
 
