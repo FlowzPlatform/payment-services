@@ -38,6 +38,44 @@ module.exports = {
               "type": "string"
           }
       },
-      "required": ["gateway", "customerId"]
+      "required": ["gateway"]
+  },
+    stripe_payment_charge_update_schema: {
+      "properties": {
+          "gateway": {
+              "description": "gateway in string",
+              "type": "string",
+              "enum": ["stripe", "authrizeDotNet"]
+          },
+          "description": {
+              "description": "description about charge in string",
+              "type": "string"
+          },
+          "metadata": {
+              "description": "Set of key/value pairs in string",
+              "type": "object"
+          },
+           "chargeId": {
+              "description": "chargeId in string",
+              "type": "string"
+          },
+          "fraud_details":{
+              "description": "fraud_details in string",
+              "type": "object"
+          },
+          "receipt_email":{
+              "description": "email address that the receipt for this charge will be sent to",
+              "type": "string"
+          },
+          "shipping":{
+              "description": "Shipping information for the chargeId",
+              "type": "object"
+          },
+          "transfer_group":{
+              "description": "identifies this transaction as part of a group",
+              "type": "string"
+          }
+      },
+      "required": ["gateway","chargeId"]
   }
 };
