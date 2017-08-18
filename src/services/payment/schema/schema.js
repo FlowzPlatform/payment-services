@@ -15,10 +15,11 @@ module.exports = {
               "type": "string",
               "enum": ["usd", "inr"]
           },
-          "customerId": {
-              "description": "customerId in string",
-              "type": "string"
-          }
+          customer
+          // "customerId": {
+          //     "description": "customerId in string",
+          //     "type": "string"
+          // }
       },
       "required": ["gateway", "amount", "currency", "customerId"]
   },
@@ -33,12 +34,18 @@ module.exports = {
               "description": "chargeId in string",
               "type": "string"
           },
-          "customerId": {
+          var customer:{
+            "customerId": {
               "description": "customerId in string",
               "type": "string"
           }
+        },
+          "limit":{
+             "description": "limit in string",
+              "type": "string"
+          }
       },
-      "required": ["gateway"]
+      "required": ["gateway","customerId"]
   },
     stripe_payment_charge_update_schema: {
       "properties": {
@@ -69,8 +76,58 @@ module.exports = {
           },
           "shipping":{
               "description": "Shipping information for the chargeId",
-              "type": "object"
-          },
+              "type": "object",
+              "properties":{
+                "address":{
+                  "description": "address for Shipping information",
+                  "type": "object",
+                  "properties":{
+                    "line1":{
+                      "description": "line1 of shipping address",
+                       "type": "string"
+                    },
+                    "city":{
+                      "description": "city of shipping address",
+                       "type": "string"
+                     },
+                     "country":{
+                       "description": "country of shipping address",
+                       "type": "string"
+                     },
+                     "line2":{
+                       "description": "line2 of shipping address",
+                       "type": "string"
+                     },
+                     "postal_code":{
+                       "description": "postal_code of shipping address",
+                       "type": "string"
+                     },
+                     "state":{
+                       "description": "state of shipping address",
+                       "type": "string"
+                     }
+                  },
+                  "required": ["line1"]
+                },
+                "name":{
+                  "description": "name for Shipping information",
+                  "type": "string"
+                  },
+                "carrier":{
+                  "description": "carrier for Shipping information",
+                  "type": "string"
+                  },
+                "phone":{
+                  "description": "phone number for shipping information",
+                  "type": "number"
+                  },
+                "tracking_number":{
+                  "description": "tracking_number for shipping information",
+                  "type": "string"
+                }  
+              },
+              "required": ["address","name"]
+            },
           "transfer_group":{
               "description": "identifies this transaction as part of a group",
               "type": "string"

@@ -156,7 +156,8 @@ class Service {
 
             if (!_.has(data, 'chargeId') && _.has(data, 'gateway')) {
                 stripe.charges.list({
-                        customer: data.customerId
+                        customer: data.customerId,
+                        limit: data.limit
                     },
                     function(err, charges) {
                         // asynchronously called
