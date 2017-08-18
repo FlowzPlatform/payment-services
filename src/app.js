@@ -15,7 +15,22 @@ const middleware = require('./middleware');
 const services = require('./services');
 const appHooks = require('./app.hooks');
 
+//let XApiToken = '11';
+
 const app = feathers();
+
+app.use(function(req, res, next) {
+    console.log("app.use........" + Object.keys(req));
+    console.log("query " + JSON.stringify(req.query));
+    console.log("params " + JSON.stringify(req.params));
+    console.log("client " + JSON.stringify(req.headers));
+    //console.log("res  "+ JSON.stringify(req.res));
+    console.log("==" + req.headers['x-api-token'] + "--");
+    this.XApiToken = req.headers['x-api-token'];
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 // Load app configuration
 app.configure(configuration(path.join(__dirname, '..')));
@@ -41,3 +56,5 @@ app.configure(middleware);
 app.hooks(appHooks);
 
 module.exports = app;
+//console.log("XApiToken :: " + XApiToken);
+//module.exports.XApiToken = XApiToken;

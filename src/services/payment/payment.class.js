@@ -8,42 +8,27 @@ const schema = require("./schema/schema.js")
 let feathersErrors = require('feathers-errors');
 let errors = feathersErrors.errors;
 //let stripeConfig = require("../../config/stripe/stripeConfig");
+const appHooks = require('../../app.hooks');
+
+const authDotnet = require('../../classes/authorizedotnet.class.js');
+const stripeClass = require('../../classes/stripe.class.js');
+
+//const objApp = require('../../app');
+//console.log('=================================' + this.XApiToken);
 
 let availableGateways = ["paypal", "stripe", "authorizeDotNet"];
 
-console.log("stripe config..");
-console.log(configParams.gateway.stripe.secret_key)
+//console.log("stripe config @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@22.." + this.XApiToken);
+//console.log(configParams.gateway.stripe.secret_key)
+/*
 let stripe = require("stripe")(
+    //this.XApiToken
     configParams.gateway.stripe.secret_key
-);
+);*/
 
 let ajv = new Ajv({
     allErrors: true
 });
-/*
-let stripe_payment_charge_schema = {
-    "properties": {
-        "gateway": {
-            "description": "gateway in string",
-            "type": "string",
-            "enum": ["stripe", "authrizeDotNet"]
-        },
-        "amount": {
-            "description": "amount in Integer",
-            "type": "integer"
-        },
-        "currency": {
-            "description": "currency in string",
-            "type": "string",
-            "enum": ["usd", "inr"]
-        },
-        "customerId": {
-            "description": "customerId in string",
-            "type": "string"
-        }
-    },
-    "required": ["gateway", "amount", "currency", "customerId"]
-}*/
 
 /* eslint-disable no-unused-vars */
 class Service {
@@ -54,22 +39,46 @@ class Service {
         this.options = options || {};
     }
 
-    find(params) {
+    async find(params) {
 
-        console.log("inside..");
-        //console.log(params);
+        console.log("inside.." + appHooks.xtoken);
+        console.log(params);
 
+        console.log(params.query.gateway)
+
+        /*
+        this.stripe = require("stripe")(
+            this.XApiToken
+        );*/
+
+        //console.log(stripe);
+
+        let response;
         let schemaName = eval("schema." + params.query.gateway + "_payment_charge_find_schema");
         //console.log(schemaName)
         this.validateSchema(params.query, schemaName)
 
+        if (params.query.gateway == "stripe") {
+            let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
+            response = await obj.getCharges(params.query)
+        } else if (params.query.gateway == "authorizeDotNet") {
+            console.log("inside authnet...");
+        }
+
+        /*
+        if (params.query.gateway == "stripe") {
+            const stripe = require("stripe")(
+                appHooks.xtoken
+            );
+        } else if (params.query.gateway == "authorizeDotNet") {
+            console.log("inside authnet...");
+        }
+
         var retrieveCharge = eval("this." + params.query.gateway + "RetrieveCharge")
 
-        let response = retrieveCharge(params.query);
+        let response = retrieveCharge(params.query, stripe);
         console.log("charges  :: " + response);
-
-        //let response = this.retrieveCharge(params.query);
-
+        */
         return response;
 
         //return Promise.resolve([]);
@@ -82,11 +91,32 @@ class Service {
         });
     }
 
-    create(data, params) {
+    async create(data, params) {
         let schemaName = eval("schema." + data.gateway + "_payment_charge_schema");
         //this.validate(data);
         this.validateSchema(data, schemaName)
-        let response = this.charge(data);
+
+        let response;
+        //    var createCharge = eval("this." + data.gateway + "CreateCharge")
+
+        if (data.gateway == "stripe") {
+
+            /*
+            const stripe = require("stripe")(
+                appHooks.xtoken
+            );
+
+            let response = createCharge(data, stripe);
+            */
+            let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
+            response = await obj.doCharge(data)
+        } else if (data.gateway == "authorizeDotNet") {
+            console.log("inside authnet..." + authDotnet);
+            let obj = new authDotnet();
+            response = obj.doCharge();
+            //console.log("================" + obj.doCharge())
+        }
+
         //console.log(response)
 
         return response;
@@ -108,28 +138,7 @@ class Service {
         }
     }
 
-    validate(data) {
-        /*
-        if(!data.gateway)
-        {
-          throw new errors.NotAcceptable('please provide gateway');
-        }
-        let isGatewayAvail = _.indexOf(availableGateways, data.gateway)
-
-        if(isGatewayAvail < 0)
-        {
-          throw new errors.NotAcceptable('gateway not valid');
-        }*/
-        let gatewayUsed = eval("schema." + data.gateway + "_payment_charge_schema");
-        //  console.log(gatewayUsed);
-        let validate = ajv.compile(gatewayUsed);
-        let valid = validate(data);
-        if (!valid) {
-            throw new errors.NotAcceptable('user input not valid', validate.errors);
-        }
-    }
-
-    charge(data) {
+    stripeCreateCharge(data, stripe) {
         console.log("inside charge..");
 
         return new Promise((resolve, reject) => {
@@ -149,11 +158,7 @@ class Service {
         })
     }
 
-    stripeCreateCharge(data) {
-
-    }
-
-    stripeRetrieveCharge(data) {
+    stripeRetrieveCharge(data, stripe) {
         console.log(1212);
         return new Promise((resolve, reject) => {
 
