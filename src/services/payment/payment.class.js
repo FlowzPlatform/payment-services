@@ -29,6 +29,8 @@ class Service {
 
         console.log("inside.." + appHooks.xtoken);
 
+        console.log("inside find");
+        //console.log(params);
         let response;
         let schemaName = eval("schema." + params.query.gateway + "_payment_charge_find_schema");
         this.validateSchema(params.query, schemaName)
@@ -53,6 +55,7 @@ class Service {
     }
 
     async create(data, params) {
+        console.log("inside create", data);
         let schemaName = eval("schema." + data.gateway + "_payment_charge_schema");
         //this.validate(data);
         this.validateSchema(data, schemaName)
@@ -103,9 +106,42 @@ class Service {
         return Promise.resolve(data);
     }
 
-    patch(id, data, params) {
-        return Promise.resolve(data);
+    patch(id, data) {
+        console.log("inside patch");
+        console.log("------------------", data);
+        let schemaName = eval("schema." + data.gateway + "_payment_charge_update_schema");
+        this.validateSchema(data, schemaName);
+        let response = this.updatedata(data);
+        return response;
     }
+
+
+    updatedata(data) {
+
+        console.log("inside updatedata..");
+        console.log("data", data);
+        var chargeId = data.chargeId;
+        delete data.chargeId;
+        delete data.gateway;
+        console.log("obj", data);
+
+
+        return new Promise((resolve, reject) => {
+            stripe.charges.update(
+                chargeId, data,
+                function(err, charge) {
+                    // asynchronously called
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        resolve(charge);
+                    }
+
+                }
+            );
+        });
+    }
+
 
     remove(id, params) {
         return Promise.resolve({ id });
