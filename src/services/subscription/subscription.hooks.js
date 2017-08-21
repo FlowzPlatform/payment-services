@@ -34,9 +34,13 @@ let stripe_subscription_get_schema = {
       },
         "id": {
             "type": "string"
+        },
+        "starting_after": {
+            "type": "string"
         }
     },
-    "required": ["id" , "gateway" ]
+    "required": ["id" , "gateway" ],
+    "additionalProperties": false
 }
 
 let stripe_subscription_delete_schema = {

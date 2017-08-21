@@ -1,3 +1,9 @@
+var customerId =  {
+              "description": "customerId in string",
+              "type": "string"
+          }
+
+
 module.exports = {
   stripe_payment_charge_schema: {
       "properties": {
@@ -15,13 +21,14 @@ module.exports = {
               "type": "string",
               "enum": ["usd", "inr"]
           },
-          customer
-          // "customerId": {
-          //     "description": "customerId in string",
-          //     "type": "string"
-          // }
+         "customerId":customerId,
+          "receipt_email": {
+              "description": "receipt_email in string",
+              "type": "string"
+          }
       },
-      "required": ["gateway", "amount", "currency", "customerId"]
+      "required": ["gateway", "amount", "currency", "customerId"],
+       "additionalProperties": false
   },
   stripe_payment_charge_find_schema: {
       "properties": {
@@ -34,18 +41,30 @@ module.exports = {
               "description": "chargeId in string",
               "type": "string"
           },
-          var customer:{
-            "customerId": {
-              "description": "customerId in string",
-              "type": "string"
-          }
-        },
+            "customerId": customerId,
           "limit":{
              "description": "limit in string",
               "type": "string"
           }
       },
-      "required": ["gateway","customerId"]
+      "required": ["gateway","customerId"],
+      "additionalProperties": false
+  },
+  stripe_payment_charge_retrive_schema: {
+      "properties": {
+          "gateway": {
+              "description": "gateway in string",
+              "type": "string",
+              "enum": ["stripe", "authrizeDotNet"]
+          },
+          "chargeId": {
+              "description": "chargeId in string",
+              "type": "string"
+          },
+            "customerId": customerId
+      },
+      "required": ["gateway","chargeId"],
+      "additionalProperties": false
   },
     stripe_payment_charge_update_schema: {
       "properties": {
@@ -133,6 +152,7 @@ module.exports = {
               "type": "string"
           }
       },
-      "required": ["gateway","chargeId"]
+      "required": ["gateway","chargeId"],
+       "additionalProperties": false
   }
 };
