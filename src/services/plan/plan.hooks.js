@@ -2,6 +2,7 @@ const Ajv = require('ajv');
 let _ = require("lodash")
 let feathersErrors = require('feathers-errors');
 let errors = feathersErrors.errors;
+const func = require("../../../functions.js");
 let stripeConfig = require("../../config/stripe/stripeConfig");
 let stripe = require("stripe")(
   "sk_test_V8ZICJodc73pjyGVBBzA0Dkb"
@@ -141,25 +142,7 @@ let ajv = new Ajv({
 
 
 before_all_hook_plan = async hook => {
-  console.log(hook);
-  if (hook.method == "find" || hook.method == "remove") {
-    let isGatewayAvail = _.indexOf(availableGateways, hook.params.query.gateway );
-    if(!hook.params.query.gateway){
-     throw new errors.NotAcceptable("please provide gateway")
-    } else  if(isGatewayAvail < 0)
-    {
-     throw new errors.NotAcceptable('gateway not valid');
-    }
-  }else
-  {
-    let isGatewayAvail = _.indexOf(availableGateways, hook.data.gateway );
-    if(!hook.data.gateway){
-     throw new errors.NotAcceptable("please provide gateway")
-    } else  if(isGatewayAvail < 0)
-    {
-     throw new errors.NotAcceptable('gateway not valid');
-    }
-  }
+  func.validateGateway(hook);
 }
 
 
@@ -199,13 +182,13 @@ async function modify_plan_id_func(hook, gateway, name) {
     var result1;
     var foundresult = false;
     str = str.replace(/\s+/g, '-').toLowerCase();
-    await r.db(config.get('rdb_db')).table("plan").filter({
-        "id": "fp-" + str
-    }).count().run(connection, function(err, result) {
-        console.log("hello ", result);
-        result1 = result;
-    })
-    console.log("result1 ", result1);
+    // await r.db(config.get('rdb_db')).table("plan").filter({
+    //     "id": "fp-" + str
+    // }).count().run(connection, function(err, result) {
+    //     console.log("hello ", result);
+    //     result1 = result;
+    // })
+    // console.log("result1 ", result1);
     let modifyPlanIdData = {
         "count": result1,
         "id": "fp-" + str
@@ -238,7 +221,7 @@ async function modify_plan_id_func(hook, gateway, name) {
         if (plan) {
           hook.result = plan;
         }else if (plan == null){
-          hook.result = new errors.Conflict('This plan already exists');
+          hook.result = err;
         //hook.result = {"error" : "plan name is already taken" , "errorCode" : 209}
         }
         resolve(hook);
