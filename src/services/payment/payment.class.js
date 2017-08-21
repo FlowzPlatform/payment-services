@@ -92,6 +92,28 @@ class Service {
         //
     }
 
+
+     update(id, data, params) {
+        return Promise.resolve(data);
+    }
+
+
+    async patch(id, data) {
+        console.log("inside patch",data);
+        let schemaName = eval("schema." + data.gateway + "_payment_charge_update_schema");
+        this.validateSchema(data, schemaName);
+        let response;
+
+        if(data.gateway == 'stripe'){
+            let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
+            response = await obj.updateCharge(data)
+        } else if (data.gateway == "authorizeDotNet") {
+            console.log("inside authnet..." + authDotnet);
+        }
+        return response;
+    }
+
+
     validateSchema(data, schemaName) {
         console.log(schemaName)
         let validateSc = ajv.compile(schemaName);
@@ -102,50 +124,11 @@ class Service {
         }
     }
 
-    update(id, data, params) {
-        return Promise.resolve(data);
-    }
-
-    patch(id, data) {
-        console.log("inside patch");
-        console.log("------------------", data);
-        let schemaName = eval("schema." + data.gateway + "_payment_charge_update_schema");
-        this.validateSchema(data, schemaName);
-        let response = this.updatedata(data);
-        return response;
-    }
-
-
-    updatedata(data) {
-
-        console.log("inside updatedata..");
-        console.log("data", data);
-        var chargeId = data.chargeId;
-        delete data.chargeId;
-        delete data.gateway;
-        console.log("obj", data);
-
-
-        return new Promise((resolve, reject) => {
-            stripe.charges.update(
-                chargeId, data,
-                function(err, charge) {
-                    // asynchronously called
-                    if (err) {
-                        console.log(err)
-                    } else {
-                        resolve(charge);
-                    }
-
-                }
-            );
-        });
-    }
-
 
     remove(id, params) {
         return Promise.resolve({ id });
     }
+
 }
 
 module.exports = function(options) {
