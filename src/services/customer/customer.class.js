@@ -36,7 +36,7 @@ class Service {
 
         if (params.query.gateway == "stripe") {
             let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
-            response = await obj.getcustomers(params.query);
+            response = await obj.getCustomer(params.query);
         } else if (params.query.gateway == "authorizeDotNet") {
             console.log("inside authnet...");
         }
@@ -75,8 +75,20 @@ class Service {
     return Promise.resolve(data);
   }
 
-  remove (id, params) {
-    return Promise.resolve({ id });
+   async remove (id, params) {
+      console.log("inside remove", params.query.gateway);
+      let schemaName = eval("schema." + params.query.gateway + "_customer_delete_schema");
+        console.log("schema",schemaName);
+        this.validateSchema(params.query, schemaName);
+        let response;
+        if (params.query.gateway == "stripe") {
+
+            let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
+            response = await obj.deleteCustomer(params.query)
+        } else if (params.query.gateway == "authorizeDotNet") {
+            console.log("inside authnet..." + authDotnet);
+        }
+        return response;
   }
 
   validateSchema(data, schemaName) {

@@ -37,7 +37,7 @@ class Service {
 
         if (params.query.gateway == "stripe") {
             let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
-            response = await obj.getCharges(params.query)
+            response = await obj.getCharge(params.query)
         } else if (params.query.gateway == "authorizeDotNet") {
             console.log("inside authnet...");
         }
