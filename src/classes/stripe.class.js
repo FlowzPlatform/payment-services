@@ -227,7 +227,25 @@ class Stripe {
 
             });
         })
-    }   
+    } 
+
+    updateCustomer(data){ 
+
+        console.log("data",data);
+        var customer = data.customer;
+        delete data.gateway;
+        delete data.customer;
+        console.log("data",data);
+
+        console.log("inside update customer",data);
+        return new Promise ((resolve,reject) => {
+            this.stripe.customers.update(
+               customer, data, function(err, customer) {
+                // asynchronously called
+                resolve(customer);
+                });
+        })
+    }  
 
     deleteCustomer(data) {
 
