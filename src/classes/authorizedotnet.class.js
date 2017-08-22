@@ -9,6 +9,12 @@ class AuthorizeDotNet {
     doCharge() {
         console.log("insiede docharge..");
     }
+
+    abc()
+    {
+      console.log(121223)
+      
+    }
 }
 
 module.exports = function(options) {

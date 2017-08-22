@@ -2,7 +2,7 @@ let _ = require("lodash")
 let feathersErrors = require('feathers-errors');
 let errors = feathersErrors.errors;
 
-let availableGateways = ["paypal", "stripe", "authorizeDotNet"];
+let availableGateways = ["paypal", "stripe", "authdotnet"];
 
 let validateGateway = function(hook) {
   console.log('inside func..'+hook.method+"--"+JSON.stringify(hook.params.query));

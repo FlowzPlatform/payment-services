@@ -7,10 +7,10 @@ let errors = feathersErrors.errors;
 //let stripeConfig = require("../../config/stripe/stripeConfig");
 const appHooks = require('../../app.hooks');
 
-const authDotnet = require('../../classes/authorizedotnet.class.js');
+const authdotnet = require('../../classes/authorizedotnet.class.js');
 const stripeClass = require('../../classes/stripe.class.js');
 
-let availableGateways = ["paypal", "stripe", "authorizeDotNet"];
+
 
 let ajv = new Ajv({
     allErrors: true
@@ -39,6 +39,7 @@ class Service {
             response = await obj.getcustomers(params.query);
         } else if (params.query.gateway == "authorizeDotNet") {
             console.log("inside authnet...");
+
         }
 
         return response;
@@ -52,16 +53,20 @@ class Service {
   }
 
   async create (data, params) {
-        console.log("inside create", data);
+        console.log("inside create");
         let schemaName = eval("schema."+data.gateway + "_customer_create_schema");
+        console.log("schemaName #######" , schemaName);
         this.validateSchema(data, schemaName)
         let response;
         if (data.gateway == "stripe") {
-
             let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
+            console.log(obj.abc());
             response = await obj.createCustomer(data)
-        } else if (data.gateway == "authorizeDotNet") {
-            console.log("inside authnet..." + authDotnet);
+        } else if (data.gateway == "authdotnet") {
+          let obj = new authdotnet({ 'secret_key': appHooks.xtoken });
+          obj.abc();
+          //console.log(Object.getOwnPropertyNames(obj1));
+          //response = obj1.createCustomer1(data);
         }
 
         return response;
@@ -80,7 +85,7 @@ class Service {
   }
 
   validateSchema(data, schemaName) {
-        console.log(schemaName)
+
         let validateSc = ajv.compile(schemaName);
         let valid = validateSc(data);
 
