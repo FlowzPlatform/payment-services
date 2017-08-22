@@ -7,10 +7,10 @@ let errors = feathersErrors.errors;
 //let stripeConfig = require("../../config/stripe/stripeConfig");
 const appHooks = require('../../app.hooks');
 
-const authDotnet = require('../../classes/authorizedotnet.class.js');
+const authdotnet = require('../../classes/authorizedotnet.class.js');
 const stripeClass = require('../../classes/stripe.class.js');
 
-let availableGateways = ["paypal", "stripe", "authorizeDotNet"];
+
 
 let ajv = new Ajv({
     allErrors: true
@@ -38,7 +38,7 @@ class Service {
         if (params.query.gateway == "stripe") {
             let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
             response = await obj.getCharge(params.query)
-        } else if (params.query.gateway == "authorizeDotNet") {
+        } else if (params.query.gateway == "authdotnet") {
             console.log("inside authnet...");
         }
 
@@ -74,10 +74,13 @@ class Service {
             */
             let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
             response = await obj.doCharge(data)
-        } else if (data.gateway == "authorizeDotNet") {
-            console.log("inside authnet..." + authDotnet);
-            let obj = new authDotnet();
-            response = obj.doCharge();
+        } else if (data.gateway == "authdotnet") {
+            console.log("inside authnet..." + authdotnet);
+            let obj = new authdotnet({
+                'api_login_key': appHooks.xtokenlogin,
+                'api_trans_key': appHooks.xtoken
+            });
+            response = obj.doCharge(data);
             //console.log("================" + obj.doCharge())
         }
 
@@ -93,22 +96,22 @@ class Service {
     }
 
 
-     update(id, data, params) {
+    update(id, data, params) {
         return Promise.resolve(data);
     }
 
 
     async patch(id, data) {
-        console.log("inside patch",data);
+        console.log("inside patch", data);
         let schemaName = eval("schema." + data.gateway + "_payment_charge_update_schema");
         this.validateSchema(data, schemaName);
         let response;
 
-        if(data.gateway == 'stripe'){
+        if (data.gateway == 'stripe') {
             let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
             response = await obj.updateCharge(data)
-        } else if (data.gateway == "authorizeDotNet") {
-            console.log("inside authnet..." + authDotnet);
+        } else if (data.gateway == "authdotnet") {
+            console.log("inside authnet..." + authdotnet);
         }
         return response;
     }
