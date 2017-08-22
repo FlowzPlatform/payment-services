@@ -101,5 +101,23 @@ module.exports = {
             }
         },
         "required": ["id", "gateway"]
-    }
+    },
+
+     stripe_customer_update_schema : {
+        "properties":{
+            "customer":{
+              "description": "customerid in String",
+              "type": "string"  
+            },
+            "description":{
+                "description": "Customer description in String",
+                "type": "string"
+            },
+            "email": {
+                "description": "email  in String",
+                "type": "string"
+            }
+        },
+        "required":["customer"]
+     }
 }

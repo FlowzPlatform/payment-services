@@ -1,4 +1,5 @@
 let _ = require("lodash")
+let stripeConfig = require("../config/stripe/stripeConfig");
 
 class Stripe {
     constructor(options) {
@@ -13,7 +14,7 @@ class Stripe {
     }
 
     doCharge(data) {
-        console.log("insiede stripe docharge..");
+        console.log("inside stripe docharge..");
         //console.log(this.stripe);
 
         return new Promise((resolve, reject) => {
@@ -33,7 +34,7 @@ class Stripe {
         })
     }
 
-    getCharges(data) {
+    getCharge(data) {
         console.log("inside getcharges...")
         console.log(1212);
         return new Promise((resolve, reject) => {
@@ -92,7 +93,8 @@ class Stripe {
         });
     }
 
-    getsubscriptions(data){
+    getSubscription(data) {
+
         console.log("getsubscriptions");
         console.log("data", data);
 
@@ -133,7 +135,8 @@ class Stripe {
     }
 
 
-    createSubscription(data){
+    createSubscription(data) {
+
         console.log("inside createSubscription",data);
         return new Promise((resolve, reject) => {
         this.stripe.subscriptions.create({
@@ -151,7 +154,8 @@ class Stripe {
     })
     }
 
-    deleteSubscription(data){
+    deleteSubscription(data) {
+
         console.log("inside deleteSubscription",data);
         return new Promise((resolve, reject) => {
         this.stripe.subscriptions.del(
@@ -162,7 +166,8 @@ class Stripe {
         });
     }
 
-    getcustomers(data){
+    getCustomer(data) {
+
         console.log("inside getcustomers",data);
         return new Promise((resolve, reject) => {
 
@@ -189,7 +194,8 @@ class Stripe {
             })
         }
 
-    createCustomer(data){
+    createCustomer(data) {
+
         console.log("inside create customer",data);
         //console.time("Timer");
         return new Promise((resolve, reject) => {
@@ -208,11 +214,9 @@ class Stripe {
                 }
                 else 
                 {
-                    
-                    //     console.log("token",token);
-                        stripeInstance.stripe.customers.create({
-                        description: 'Customer for liam.moore@example.com',
-                        source: token.id // obtained with Stripe.js
+                    stripeInstance.stripe.customers.create({
+                    description: 'Customer for liam.moore@example.com',
+                    source: token.id // obtained with Stripe.js
                     }, function(err, customer) {
                             customer.tok_id = token.id ;
                             resolve(customer);
@@ -223,8 +227,134 @@ class Stripe {
 
             });
         })
-    }   
+    } 
 
+    updateCustomer(data){ 
+
+        console.log("data",data);
+        var customer = data.customer;
+        delete data.gateway;
+        delete data.customer;
+        console.log("data",data);
+
+        console.log("inside update customer",data);
+        return new Promise ((resolve,reject) => {
+            this.stripe.customers.update(
+               customer, data, function(err, customer) {
+                // asynchronously called
+                resolve(customer);
+                });
+        })
+    }  
+
+    deleteCustomer(data) {
+
+        console.log("inside delete customer",data);
+        return new Promise((resolve, reject) => {
+            this.stripe.customers.del(
+                data.id,
+                function(err, confirmation) {
+                    console.log(confirmation);
+                        resolve(confirmation);
+                });
+            })
+        }
+
+    async createPlan(data) {
+
+        console.log("111111111111111111 ", data)
+        var modify_interval = this.modify_interval_func(data.gateway, data.interval);
+        let modifyPlanId = await this.modify_plan_id_func(data.gateway,data.name);
+        console.log(modify_interval);
+        console.log("result  ", modifyPlanId);
+        data.id = modifyPlanId.id;
+        data.interval = modify_interval;
+        console.log("22222222222222222222222 ", data);
+
+        return new Promise((resolve, reject) => {
+
+            this.stripe.plans.create({
+            amount: data.amount,
+            interval: data.interval,
+            name: data.name,
+            currency: data.currency,
+            id: data.id
+            }, function(err, plan) {
+                // asynchronously called
+                console.log("created plan ---- " , plan);
+                resolve(plan);
+            })
+        })
+
+    } 
+
+    modify_interval_func(gateway, interval) {
+     var new1 = eval(gateway + "Config.interval." + interval);
+     console.log("modify_interval_func",new1);
+      return eval(gateway + "Config.interval." + interval)
+    }
+
+    modify_plan_id_func(gateway, name) {
+    var str = name;
+    var foundresult = false;
+    str = str.replace(/\s+/g, '-').toLowerCase();
+    let modifyPlanIdData = {
+        "id": "fp-" + str
+    };
+    console.log("modifyPlanIdData",modifyPlanIdData);
+    return modifyPlanIdData;
+    }
+
+
+    getPlan(data) {
+
+        console.log("inside getplan",data);
+
+        return new Promise((resolve, reject) => {
+
+        if(!_.has(data, 'id') && _.has(data, 'gateway'))  {
+            this.stripe.plans.list(
+                {"limit" : 15},
+                function(err, plans) {
+                console.log("plans",plans);
+                resolve(plans);
+                });
+        }else if (_.has(data, 'gateway') && _.has(data, 'id')){
+         this.stripe.plans.retrieve(
+            data.id,
+            function(err, plan) {
+            console.log("plan",plan);
+            resolve(plan);
+         });
+        }
+     })
+    }
+
+    updatePlan(data) {
+
+        return new Promise((resolve, reject) => {
+            let stripe_interval =   this.modify_interval_func(data.gateway ,data.interval);
+            console.log(stripe_interval);
+            this.stripe.plans.update(data.id, {
+                name: data.name
+                }, function(err, plan) {
+                        console.log(plan);
+                        resolve(plan);
+                });
+        })
+    }
+
+    deletePlan(data) {
+
+        return new Promise((resolve, reject) => {
+        this.stripe.plans.del(
+            data.id,
+            function(err, confirmation) {
+              console.log(confirmation);
+              resolve(confirmation);
+            });
+        })
+    }
 
 }
 
