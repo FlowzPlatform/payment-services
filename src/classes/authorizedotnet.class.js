@@ -1,5 +1,6 @@
 var ApiContracts = require('authorizenet').APIContracts;
 var ApiControllers = require('authorizenet').APIControllers;
+let _ = require("lodash")
 
 class AuthorizeDotNet {
     constructor(options) {
@@ -13,6 +14,10 @@ class AuthorizeDotNet {
         this.merchantAuth.setTransactionKey(options.api_trans_key);
         console.log(this.merchantAuth);
     }
+
+
+    //########   PAYMENT    ########//
+
 
     doCharge(data) {
 
@@ -84,12 +89,278 @@ class AuthorizeDotNet {
         })
     }
 
-    abc()
+
+
+    //########   CUSTOMER    ########//
+
+
+    createCustomer(data , callback)
     {
-      console.log(121223)
-      
+
+
+    	var creditCard = new ApiContracts.CreditCardType();
+    	creditCard.setCardNumber(data.cardNumber);
+    	creditCard.setExpirationDate('0922');
+
+    	var paymentType = new ApiContracts.PaymentType();
+    	paymentType.setCreditCard(creditCard);
+
+    	var customerPaymentProfileType = new ApiContracts.CustomerPaymentProfileType();
+    	customerPaymentProfileType.setCustomerType(ApiContracts.CustomerTypeEnum.INDIVIDUAL);
+    	customerPaymentProfileType.setPayment(paymentType);
+
+    	var paymentProfilesList = [];
+    	paymentProfilesList.push(customerPaymentProfileType);
+
+    	var customerProfileType = new ApiContracts.CustomerProfileType();
+    	customerProfileType.setMerchantCustomerId(data.merchantCustomerId);
+    	customerProfileType.setDescription(data.description);
+    	customerProfileType.setEmail(data.email);
+    	customerProfileType.setPaymentProfiles(paymentProfilesList);
+
+    	var createRequest = new ApiContracts.CreateCustomerProfileRequest();
+    	createRequest.setProfile(customerProfileType);
+    	createRequest.setValidationMode(ApiContracts.ValidationModeEnum.TESTMODE);
+    	createRequest.setMerchantAuthentication(this.merchantAuth);
+
+    	//pretty print request
+    	//console.log(JSON.stringify(createRequest.getJSON(), null, 2));
+      return new Promise((resolve, reject) => {
+
+
+
+    	var ctrl = new ApiControllers.CreateCustomerProfileController(createRequest.getJSON());
+
+    	ctrl.execute(function(){
+
+    		var apiResponse = ctrl.getResponse();
+
+    		var response = new ApiContracts.CreateCustomerProfileResponse(apiResponse);
+
+    		//pretty print response
+    		//console.log(JSON.stringify(response, null, 2));
+
+    		if(response != null)
+    		{
+    			if(response.getMessages().getResultCode() == ApiContracts.MessageTypeEnum.OK)
+    			{
+    				console.log('Successfully created a customer profile with id: ' + response.getCustomerProfileId());
+    			}
+    			else
+    			{
+    				console.log('Result Code: ' + response.getMessages().getResultCode());
+    				console.log('Error Code: ' + response.getMessages().getMessage()[0].getCode());
+    				console.log('Error message: ' + response.getMessages().getMessage()[0].getText());
+    			}
+    		}
+    		else
+    		{
+    			console.log('Null response received');
+    		}
+
+    		resolve(response);
+    	});
+
+      })
     }
+
+    getCustomer(data) {
+
+      return new Promise((resolve, reject) => {
+          if(!_.has(data, 'id') && _.has(data, 'gateway'))
+          {
+            var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
+
+
+          	var getRequest = new ApiContracts.GetCustomerProfileIdsRequest();
+          	getRequest.setMerchantAuthentication(this.merchantAuth);
+
+          	//pretty print request
+          	//console.log(JSON.stringify(getRequest.getJSON(), null, 2));
+
+          		var ctrl = new ApiControllers.GetCustomerProfileIdsController(getRequest.getJSON());
+
+          		ctrl.execute(function(){
+
+          			var apiResponse = ctrl.getResponse();
+
+          			var response = new ApiContracts.GetCustomerProfileIdsResponse(apiResponse);
+
+          			//pretty print response
+          			//console.log(JSON.stringify(response, null, 2));
+
+          			if(response != null)
+          			{
+
+          				if(response.getMessages().getResultCode() == ApiContracts.MessageTypeEnum.OK)
+          				{
+          					console.log('List of Customer profile Ids : ');
+          					var profileIds = response.getIds().getNumericString();
+          					for (var i=0;i<profileIds.length;i++)
+          					{
+          						console.log(profileIds[i].toString());
+          					}
+          				}
+          				else
+          				{
+          					//console.log('Result Code: ' + response.getMessages().getResultCode());
+          					console.log('Error Code: ' + response.getMessages().getMessage()[0].getCode());
+          					console.log('Error message: ' + response.getMessages().getMessage()[0].getText());
+          				}
+          			}
+          			else
+          			{
+          				console.log('Null response received');
+          			}
+
+                resolve(response);
+
+          		});
+
+           }else if (_.has(data, 'gateway') && _.has(data, 'id'))
+           {
+             var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
+
+             var getRequest = new ApiContracts.GetCustomerProfileRequest();
+             getRequest.setCustomerProfileId(data.id);
+             getRequest.setMerchantAuthentication(this.merchantAuth);
+
+             //pretty print request
+             //console.log(JSON.stringify(createRequest.getJSON(), null, 2));
+
+             var ctrl = new ApiControllers.GetCustomerProfileController(getRequest.getJSON());
+
+             ctrl.execute(function(){
+
+               var apiResponse = ctrl.getResponse();
+
+               var response = new ApiContracts.GetCustomerProfileResponse(apiResponse);
+
+               //pretty print response
+               //console.log(JSON.stringify(response, null, 2));
+
+               if(response != null)
+               {
+                 if(response.getMessages().getResultCode() == ApiContracts.MessageTypeEnum.OK)
+                 {
+                   console.log('Customer profile ID : ' + response.getProfile().getCustomerProfileId());
+                   console.log('Customer Email : ' + response.getProfile().getEmail());
+                   console.log('Description : ' + response.getProfile().getDescription());
+                 }
+                 else
+                 {
+                   //console.log('Result Code: ' + response.getMessages().getResultCode());
+                   console.log('Error Code: ' + response.getMessages().getMessage()[0].getCode());
+                   console.log('Error message: ' + response.getMessages().getMessage()[0].getText());
+                 }
+               }
+               else
+               {
+                 console.log('Null response received');
+               }
+
+               resolve(response);
+             });
+            }
+          })
+      }
+
+      updateCustomer(data) {
+        return new Promise ((resolve , reject) => {
+          var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
+
+        	var customerDataForUpdate = new ApiContracts.CustomerProfileExType();
+        	customerDataForUpdate.setMerchantCustomerId(data.merchantCustomerId);
+        	customerDataForUpdate.setDescription(data.description);
+        	customerDataForUpdate.setEmail(data.email);
+        	customerDataForUpdate.setCustomerProfileId(data.customer);
+
+        	var updateRequest = new ApiContracts.UpdateCustomerProfileRequest();
+        	updateRequest.setMerchantAuthentication(this.merchantAuth);
+        	updateRequest.setProfile(customerDataForUpdate);
+
+        	//console.log(JSON.stringify(updateRequest.getJSON(), null, 2));
+
+        	var ctrl = new ApiControllers.UpdateCustomerProfileController(updateRequest.getJSON());
+
+        	ctrl.execute(function(){
+
+        		var apiResponse = ctrl.getResponse();
+
+        		var response = new ApiContracts.UpdateCustomerProfileResponse(apiResponse);
+
+        		if(response != null)
+        		{
+        			if(response.getMessages().getResultCode() == ApiContracts.MessageTypeEnum.OK)
+        			{
+        				console.log('Successfully updated a customer profile with id: ' + data.customer);
+        			}
+        			else
+        			{
+        				//console.log('Result Code: ' + response.getMessages().getResultCode());
+        				console.log('Error Code: ' + response.getMessages().getMessage()[0].getCode());
+        				console.log('Error message: ' + response.getMessages().getMessage()[0].getText());
+        			}
+        		}
+        		else
+        		{
+        			console.log('Null response received');
+        		}
+
+        		resolve(response);
+        	});
+        })
+      }
+
+      deleteCustomer(data) {
+
+        return new Promise((resolve , reject) => {
+          var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
+
+        	var deleteRequest = new ApiContracts.DeleteCustomerProfileRequest();
+        	deleteRequest.setMerchantAuthentication(this.merchantAuth);
+        	deleteRequest.setCustomerProfileId(data.id);
+
+        	//pretty print request
+        	//console.log(JSON.stringify(createRequest.getJSON(), null, 2));
+
+        	var ctrl = new ApiControllers.DeleteCustomerProfileController(deleteRequest.getJSON());
+
+        	ctrl.execute(function(){
+
+        		var apiResponse = ctrl.getResponse();
+
+        		var response = new ApiContracts.DeleteCustomerProfileResponse(apiResponse);
+
+        		//pretty print response
+        		//console.log(JSON.stringify(response, null, 2));
+
+        		if(response != null)
+        		{
+        			if(response.getMessages().getResultCode() == ApiContracts.MessageTypeEnum.OK)
+        			{
+        				console.log('Successfully deleted a customer profile with id: ' + data.id);
+        			}
+        			else
+        			{
+        				//console.log('Result Code: ' + response.getMessages().getResultCode());
+        				console.log('Error Code: ' + response.getMessages().getMessage()[0].getCode());
+        				console.log('Error message: ' + response.getMessages().getMessage()[0].getText());
+        			}
+        		}
+        		else
+        		{
+        			console.log('Null response received');
+        		}
+
+        		resolve(response);
+        	});
+        })
+      }
 }
+
+
+
 
 module.exports = function(options) {
     return new AuthorizeDotNet(options);

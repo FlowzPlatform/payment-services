@@ -37,9 +37,12 @@ class Service {
         if (params.query.gateway == "stripe") {
             let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
             response = await obj.getCustomer(params.query);
-        } else if (params.query.gateway == "authorizeDotNet") {
-            console.log("inside authnet...");
-
+        } else if (params.query.gateway == "authdotnet") {
+          let obj = new authdotnet({
+              'api_login_key': appHooks.xtokenlogin,
+              'api_trans_key': appHooks.xtoken
+          });
+          response = await obj.getCustomer(params.query);
         }
 
         return response;
@@ -58,15 +61,18 @@ class Service {
         console.log("schemaName #######" , schemaName);
         this.validateSchema(data, schemaName)
         let response;
-        if (data.gateway == "stripe") {
+        if (data.gateway == "stripe")
+        {
             let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
             console.log(obj.abc());
             response = await obj.createCustomer(data)
-        } else if (data.gateway == "authdotnet") {
-          let obj = new authdotnet({ 'secret_key': appHooks.xtoken });
-          obj.abc();
-          //console.log(Object.getOwnPropertyNames(obj1));
-          //response = obj1.createCustomer1(data);
+        } else if (data.gateway == "authdotnet")
+        {
+          let obj = new authdotnet({
+              'api_login_key': appHooks.xtokenlogin,
+              'api_trans_key': appHooks.xtoken
+          });
+          response = obj.createCustomer(data);
         }
 
         return response;
@@ -85,8 +91,12 @@ class Service {
         if(data.gateway == 'stripe'){
             let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
             response = await obj.updateCustomer(data)
-        } else if (data.gateway == "authorizeDotNet") {
-            console.log("inside authnet..." + authDotnet);
+        } else if (data.gateway == "authdotnet") {
+          let obj = new authdotnet({
+              'api_login_key': appHooks.xtokenlogin,
+              'api_trans_key': appHooks.xtoken
+          });
+          response = obj.updateCustomer(data);
         }
         return response;
     }
@@ -98,11 +108,14 @@ class Service {
         this.validateSchema(params.query, schemaName);
         let response;
         if (params.query.gateway == "stripe") {
-
             let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
             response = await obj.deleteCustomer(params.query)
-        } else if (params.query.gateway == "authorizeDotNet") {
-            console.log("inside authnet..." + authDotnet);
+        } else if (params.query.gateway == "authdotnet") {
+          let obj = new authdotnet({
+              'api_login_key': appHooks.xtokenlogin,
+              'api_trans_key': appHooks.xtoken
+          });
+          response = await obj.deleteCustomer(params.query)
         }
         return response;
   }

@@ -100,7 +100,7 @@ class Stripe {
 
         return new Promise((resolve, reject) => {
         if (!_.has(data, 'id') && _.has(data, 'gateway')) {
-         
+
                 // let gte = "gt";
                 let filterByCreated = "gte";
                 let createdAt = data.createdAt
@@ -118,7 +118,7 @@ class Stripe {
                         resolve(subscriptions);
                     }
                 );
-            
+
 
         } else if (_.has(data, 'gateway') && _.has(data, 'id')) {
                 //console.log(hook.params.query);
@@ -129,7 +129,7 @@ class Stripe {
                         resolve(plan);
                     }
                 );
-            
+
         }
     })
     }
@@ -212,7 +212,7 @@ class Stripe {
                 if(err){
                      console.log("error ", err);
                 }
-                else 
+                else
                 {
                     stripeInstance.stripe.customers.create({
                     description: 'Customer for liam.moore@example.com',
@@ -227,9 +227,9 @@ class Stripe {
 
             });
         })
-    } 
+    }
 
-    updateCustomer(data){ 
+    updateCustomer(data){
 
         console.log("data",data);
         var customer = data.customer;
@@ -245,7 +245,7 @@ class Stripe {
                 resolve(customer);
                 });
         })
-    }  
+    }
 
     deleteCustomer(data) {
 
@@ -286,7 +286,7 @@ class Stripe {
             })
         })
 
-    } 
+    }
 
     modify_interval_func(gateway, interval) {
      var new1 = eval(gateway + "Config.interval." + interval);

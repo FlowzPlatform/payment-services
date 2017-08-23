@@ -19,7 +19,7 @@ module.exports = {
                 "description": "CVC in Number",
                 "type": "number"
             },
-            "desc": {
+            "description": {
                 "description": "Customer description in String",
                 "type": "string"
             },
@@ -35,7 +35,7 @@ module.exports = {
        "properties": {
            "gateway": {
                "type": "string",
-               "enum": ["stripe", "authdotnet"]
+               "enum": [ "authdotnet"]
            },
            "cardNumber": {
                "description": "card Nunber"
@@ -51,16 +51,21 @@ module.exports = {
                "description": "CVC in Number",
                "type": "number"
            },
-           "desc": {
+           "email": {
+               "description": "Customer email in String",
+               "type": "string"
+           },
+           "description": {
                "description": "Customer description in String",
                "type": "string"
            },
-           "email": {
-               "description": "email  in String",
+           "merchantCustomerId": {
+               "description": "merchantCustomerId must be unique",
                "type": "string"
            }
        },
-       "required": ["cardNumber", "gateway", "expMonth", "expYear", "cvc"]
+       "required": ["cardNumber", "gateway", "expMonth", "expYear","description",  'merchantCustomerId'],
+       "additionalProperties": false
    },
 
 
@@ -90,6 +95,28 @@ module.exports = {
         "required": ["id", "gateway"]
     },
 
+    authdotnet_customer_get_schema : {
+       "properties": {
+           "gateway": {
+               "type": "string",
+               "enum": ["stripe", "authdotnet"]
+           },
+           "id": {
+               "type": "string"
+           }
+       },
+       "required": [ "gateway"]
+   },
+
+
+
+
+
+
+
+
+
+
      stripe_customer_delete_schema : {
         "properties": {
             "gateway": {
@@ -102,14 +129,36 @@ module.exports = {
         },
         "required": ["id", "gateway"]
     },
+    authdotnet_customer_delete_schema : {
+       "properties": {
+           "gateway": {
+               "type": "string",
+               "enum": ["stripe", "authdotnet"]
+           },
+           "id": {
+               "type": "string"
+           }
+       },
+       "required": ["id", "gateway"]
+   },
+
+
+
+
+
+
 
      stripe_customer_update_schema : {
         "properties":{
+          "gateway": {
+              "type": "string",
+              "enum": ["stripe", "authdotnet"]
+          },
             "customer":{
               "description": "customerid in String",
-              "type": "string"  
+              "type": "string"
             },
-            "description":{
+            "desc":{
                 "description": "Customer description in String",
                 "type": "string"
             },
@@ -119,5 +168,32 @@ module.exports = {
             }
         },
         "required":["customer"]
+     },
+
+     authdotnet_customer_update_schema : {
+        "properties":{
+            "gateway": {
+                "type": "string",
+                "enum": ["stripe", "authdotnet"]
+            },
+            "customer":{
+              "description": "customer in String",
+              "type": "string"
+            },
+            "description":{
+                "description": "Customer description in String",
+                "type": "string"
+            },
+            "email": {
+                "description": "email  in String",
+                "type": "string"
+            },
+            "merchantCustomerId": {
+                "description": "merchantCustomerId must be unique",
+                "type": "string"
+            }
+        },
+        "required":["customer"],
+         "additionalProperties": false
      }
 }
