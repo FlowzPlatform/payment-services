@@ -64,17 +64,13 @@ module.exports = {
                 "description": "amount in Integer",
                 "type": "integer"
             },
-            "currency": {
-                "description": "currency in string",
-                "type": "string",
-                "enum": ["usd", "inr"]
-            },
-            "customerId": {
-                "description": "customerId in string",
+            "customerId": customerId,
+            "customerPaymentProfieId": {
+                "description": "customerPaymentProfieId in string",
                 "type": "string"
             }
         },
-        "required": ["gateway", "amount"]
+        "required": ["gateway", "amount", "customerId", "customerPaymentProfieId"]
     },
     stripe_payment_charge_retrive_schema: {
         "properties": {
