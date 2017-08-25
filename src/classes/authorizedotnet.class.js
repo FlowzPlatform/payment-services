@@ -97,7 +97,7 @@ class AuthorizeDotNet {
     createCustomer(data , callback)
     {
 
-
+      console.log("inside create customer")
     	var creditCard = new ApiContracts.CreditCardType();
     	creditCard.setCardNumber(data.cardNumber);
     	creditCard.setExpirationDate('0922');
@@ -126,26 +126,25 @@ class AuthorizeDotNet {
     	paymentProfilesList.push(customerPaymentProfileType);
 
       var customerShippingProfileType = new ApiContracts.CustomerAddressType();
-    	customerShippingProfileType.setFirstName("paul");
-    	customerShippingProfileType.setLastName("Nabarag");
-    	customerShippingProfileType.setCompany("xyz");
-    	customerShippingProfileType.setAddress("64 line str");
-    	customerShippingProfileType.setCity("LA");
-    	customerShippingProfileType.setState("ilinoy");
-    	customerShippingProfileType.setZip("213212");
-    	customerShippingProfileType.setCountry("AM");
-    	customerShippingProfileType.setPhoneNumber("2113456786");
-    	customerShippingProfileType.setFaxNumber("23232232323");
+
+      console.log("------------------------------------------",data.address.firstName);
+      customerShippingProfileType.setFirstName(data.address.firstName);
+      customerShippingProfileType.setLastName(data.address.lastName);
+      customerShippingProfileType.setCompany(data.address.company);
+      customerShippingProfileType.setAddress(data.address.address);
+      customerShippingProfileType.setCity(data.address.city);
+      customerShippingProfileType.setState(data.address.state);
+      customerShippingProfileType.setZip(data.address.zip);
+      customerShippingProfileType.setCountry(data.address.county);
+      customerShippingProfileType.setPhoneNumber(data.address.phoneNumber);
+      customerShippingProfileType.setFaxNumber(data.address.faxNumber);
 
 
-    	var shippingProfilesList = [];
-    	shippingProfilesList.push(customerShippingProfileType)
+      var shippingProfilesList = [];
+      shippingProfilesList.push(customerShippingProfileType)
 
+    	var customerProfileType = new ApiContracts.CustomerProfileType();
 
-
-
-
-      var customerProfileType = new ApiContracts.CustomerProfileType();
     	customerProfileType.setMerchantCustomerId(data.merchantCustomerId);
     	customerProfileType.setDescription(data.description);
     	customerProfileType.setEmail(data.email);

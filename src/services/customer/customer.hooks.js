@@ -34,9 +34,7 @@ module.exports = {
   }
 };
 
-
-before_all_hook_customer = async hook => {
-   console.log("before hook.." + this.XApiToken);
-   func.validateGateway(hook);
+function before_all_hook_customer(hook) {
+    console.log("before hook.." + this.XApiToken);
+    func.validateGateway(hook);
 }
-
