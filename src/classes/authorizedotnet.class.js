@@ -443,14 +443,15 @@ class AuthorizeDotNet {
         return new Promise((resolve, reject) => {
             var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
 
-
+            //resolve(ApiContracts.ARBSubscriptionUnitEnum);
           	var interval = new ApiContracts.PaymentScheduleType.Interval();
-          	interval.setLength(data.subscription.paymentSchedule.interval.length);
-          	interval.setUnit(ApiContracts.ARBSubscriptionUnitEnum.months);
+            //console.log("data.subscription.paymentSchedule.interval.length",data.subscription.paymentSchedule.interval.length);
+          	interval.setLength(data.subscription.paymentSchedule.interval.lenth);
+          	interval.setUnit(ApiContracts.ARBSubscriptionUnitEnum.MONTHS);
 
           	var paymentScheduleType = new ApiContracts.PaymentScheduleType();
             console.log("data.subscription.paymentSchedule.interval",data.subscription.paymentSchedule.interval);
-          	paymentScheduleType.setInterval(data.subscription.paymentSchedule.interval);
+          	paymentScheduleType.setInterval(interval);
           	paymentScheduleType.setStartDate(data.subscription.paymentSchedule.startDate);
           	paymentScheduleType.setTotalOccurrences(data.subscription.paymentSchedule.totalOccurrences);
           	paymentScheduleType.setTrialOccurrences(data.subscription.paymentSchedule.trialOccurrences);
@@ -462,10 +463,10 @@ class AuthorizeDotNet {
 
           	var arbSubscription = new ApiContracts.ARBSubscriptionType();
           	arbSubscription.setName(data.subscription.name);
-          	arbSubscription.setPaymentSchedule(data.subscription.paymentSchedule);
+          	arbSubscription.setPaymentSchedule(paymentScheduleType);
           	arbSubscription.setAmount(data.subscription.amount);
           	arbSubscription.setTrialAmount(data.subscription.trialAmount);
-          	arbSubscription.setProfile(data.subscription.profile);
+          	arbSubscription.setProfile(customerProfileIdType);
 
 
             var createRequest = new ApiContracts.ARBCreateSubscriptionRequest();
