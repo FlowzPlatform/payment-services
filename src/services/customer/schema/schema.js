@@ -64,7 +64,7 @@ module.exports = {
                "type": "string"
            }
        },
-       "required": ["cardNumber", "gateway", "expMonth", "expYear","description",  'merchantCustomerId'],
+       "required": ["cardNumber", "gateway", "expMonth", "expYear","description",  'merchantCustomerId' ],
        "additionalProperties": false
    },
 

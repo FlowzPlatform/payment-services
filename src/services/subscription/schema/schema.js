@@ -3,7 +3,7 @@ module.exports = {
       "properties": {
         "gateway": {
             "type": "string",
-            "enum": ["stripe", "authrizeDotNet"]
+            "enum": ["stripe"]
         },
           "customer": {
              "description": "valid customer id"
@@ -15,12 +15,37 @@ module.exports = {
       "required": [ "gateway" , "customer" ],
       "additionalProperties": false
   },
+  authdotnet_subscription_create_schema : {
+     "properties": {
+       "gateway": {
+           "type": "string",
+           "enum": ["stripe", "authdotnet"]
+       },
+         "customer": {
+            "description": "valid customer id"
+         },
+         "plan": {
+             "description": "valid plan id"
+         }
+     },
+     "required": [ "gateway" ],
+     "additionalProperties": false
+ },
+
+
+
+
+
+
+
+
+
 
    stripe_subscription_get_schema : {
       "properties": {
         "gateway": {
             "type": "string",
-            "enum": ["stripe", "authrizeDotNet"]
+            "enum": ["stripe"]
         },
           "id": {
               "type": "string"
@@ -56,7 +81,7 @@ module.exports = {
       "properties": {
         "gateway": {
             "type": "string",
-            "enum": ["stripe", "authrizeDotNet"]
+            "enum": ["stripe"]
         },
           "id": {
               "type": "string"

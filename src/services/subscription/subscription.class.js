@@ -7,7 +7,7 @@ let errors = feathersErrors.errors;
 //let stripeConfig = require("../../config/stripe/stripeConfig");
 const appHooks = require('../../app.hooks');
 
-const authDotnet = require('../../classes/authorizedotnet.class.js');
+const authdotnet = require('../../classes/authorizedotnet.class.js');
 const stripeClass = require('../../classes/stripe.class.js');
 
 let availableGateways = ["paypal", "stripe", "authorizeDotNet"];
@@ -52,7 +52,7 @@ class Service {
   }
 
   async create (data, params) {
-   
+
         console.log("inside create", data);
         let schemaName = eval("schema." + data.gateway + "_subscription_create_schema");
         console.log("schema",schemaName);
@@ -62,12 +62,16 @@ class Service {
 
             let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
             response = await obj.createSubscription(data)
-        } else if (data.gateway == "authorizeDotNet") {
-            console.log("inside authnet..." + authDotnet);
+        } else if (data.gateway == "authdotnet") {
+          let obj = new authdotnet({
+              'api_login_key': appHooks.xtokenlogin,
+              'api_trans_key': appHooks.xtoken
+          });
+          response = await obj.createSubscription(data)
         }
         return response;
-   
-        
+
+
   }
 
   update (id, data, params) {

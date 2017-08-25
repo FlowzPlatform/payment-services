@@ -105,23 +105,64 @@ class AuthorizeDotNet {
     	var paymentType = new ApiContracts.PaymentType();
     	paymentType.setCreditCard(creditCard);
 
+      var customerBillingProfileType = new ApiContracts.CustomerAddressType();
+    	customerBillingProfileType.setFirstName("paul");
+    	customerBillingProfileType.setLastName("Nabarag");
+    	customerBillingProfileType.setCompany("xyz");
+    	customerBillingProfileType.setAddress("64 line str");
+    	customerBillingProfileType.setCity("LA");
+    	customerBillingProfileType.setState("ilinoy");
+    	customerBillingProfileType.setZip("213212");
+    	customerBillingProfileType.setCountry("AM");
+    	customerBillingProfileType.setPhoneNumber("2113456786");
+    	customerBillingProfileType.setFaxNumber("23232232323");
+
     	var customerPaymentProfileType = new ApiContracts.CustomerPaymentProfileType();
     	customerPaymentProfileType.setCustomerType(ApiContracts.CustomerTypeEnum.INDIVIDUAL);
     	customerPaymentProfileType.setPayment(paymentType);
+      customerPaymentProfileType.setBillTo(customerBillingProfileType);
 
     	var paymentProfilesList = [];
     	paymentProfilesList.push(customerPaymentProfileType);
 
-    	var customerProfileType = new ApiContracts.CustomerProfileType();
+      var customerShippingProfileType = new ApiContracts.CustomerAddressType();
+    	customerShippingProfileType.setFirstName("paul");
+    	customerShippingProfileType.setLastName("Nabarag");
+    	customerShippingProfileType.setCompany("xyz");
+    	customerShippingProfileType.setAddress("64 line str");
+    	customerShippingProfileType.setCity("LA");
+    	customerShippingProfileType.setState("ilinoy");
+    	customerShippingProfileType.setZip("213212");
+    	customerShippingProfileType.setCountry("AM");
+    	customerShippingProfileType.setPhoneNumber("2113456786");
+    	customerShippingProfileType.setFaxNumber("23232232323");
+
+
+    	var shippingProfilesList = [];
+    	shippingProfilesList.push(customerShippingProfileType)
+
+
+
+
+
+      var customerProfileType = new ApiContracts.CustomerProfileType();
     	customerProfileType.setMerchantCustomerId(data.merchantCustomerId);
     	customerProfileType.setDescription(data.description);
     	customerProfileType.setEmail(data.email);
     	customerProfileType.setPaymentProfiles(paymentProfilesList);
+      customerProfileType.setShipToList(shippingProfilesList);
+
 
     	var createRequest = new ApiContracts.CreateCustomerProfileRequest();
     	createRequest.setProfile(customerProfileType);
     	createRequest.setValidationMode(ApiContracts.ValidationModeEnum.TESTMODE);
     	createRequest.setMerchantAuthentication(this.merchantAuth);
+
+      var merchantAuthForShipping = this.merchantAuth;
+
+
+
+
 
     	//pretty print request
     	//console.log(JSON.stringify(createRequest.getJSON(), null, 2));
@@ -145,6 +186,8 @@ class AuthorizeDotNet {
     			if(response.getMessages().getResultCode() == ApiContracts.MessageTypeEnum.OK)
     			{
     				console.log('Successfully created a customer profile with id: ' + response.getCustomerProfileId());
+
+
     			}
     			else
     			{
@@ -356,6 +399,74 @@ class AuthorizeDotNet {
         		resolve(response);
         	});
         })
+      }
+
+
+      /////////  SUBSCRIPTION   ///////////
+
+      createSubscription(data) {
+
+        return new Promise((resolve , reject) => {
+          var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
+
+          	var interval = new ApiContracts.PaymentScheduleType.Interval();
+          	interval.setLength(1);
+          	interval.setUnit(ApiContracts.ARBSubscriptionUnitEnum.MONTHS);
+
+          	var paymentScheduleType = new ApiContracts.PaymentScheduleType();
+          	paymentScheduleType.setInterval(interval);
+          	paymentScheduleType.setStartDate("2020-08-30");
+          	paymentScheduleType.setTotalOccurrences(5);
+          	paymentScheduleType.setTrialOccurrences(0);
+
+          	var customerProfileIdType = new ApiContracts.CustomerProfileIdType();
+          	customerProfileIdType.setCustomerProfileId("1501717563");
+          	customerProfileIdType.setCustomerPaymentProfileId("1501241138");
+          	customerProfileIdType.setCustomerAddressId("1501271398");
+
+          	var arbSubscription = new ApiContracts.ARBSubscriptionType();
+          	arbSubscription.setName("Sample subscription");
+          	arbSubscription.setPaymentSchedule(paymentScheduleType);
+          	arbSubscription.setAmount(10);
+          	arbSubscription.setTrialAmount(0);
+          	arbSubscription.setProfile(customerProfileIdType);
+
+          	var createRequest = new ApiContracts.ARBCreateSubscriptionRequest();
+          	createRequest.setMerchantAuthentication(this.merchantAuth);
+          	createRequest.setSubscription(arbSubscription);
+
+          	console.log(JSON.stringify(createRequest.getJSON(), null, 2));
+
+          	var ctrl = new ApiControllers.ARBCreateSubscriptionController(createRequest.getJSON());
+
+          	ctrl.execute(function(){
+
+          		var apiResponse = ctrl.getResponse();
+
+          		var response = new ApiContracts.ARBCreateSubscriptionResponse(apiResponse);
+
+          		console.log(JSON.stringify(response, null, 2));
+
+          		if(response != null){
+          			if(response.getMessages().getResultCode() == ApiContracts.MessageTypeEnum.OK){
+          				console.log('Subscription Id : ' + response.getSubscriptionId());
+          				console.log('Message Code : ' + response.getMessages().getMessage()[0].getCode());
+          				console.log('Message Text : ' + response.getMessages().getMessage()[0].getText());
+          			}
+          			else{
+          				console.log('Result Code: ' + response.getMessages().getResultCode());
+          				console.log('Error Code: ' + response.getMessages().getMessage()[0].getCode());
+          				console.log('Error message: ' + response.getMessages().getMessage()[0].getText());
+          			}
+          		}
+          		else{
+          			console.log('Null Response.');
+          		}
+
+          		resolve(response);
+            })
+        })
+
       }
 }
 
