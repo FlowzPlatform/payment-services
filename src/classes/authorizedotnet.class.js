@@ -459,7 +459,6 @@ class AuthorizeDotNet {
             customerProfileIdType.setCustomerAddressId("1501271398");
 
 
-
             var arbSubscription = new ApiContracts.ARBSubscriptionType();
             arbSubscription.setName("Sample subscription");
             arbSubscription.setPaymentSchedule(paymentScheduleType);
