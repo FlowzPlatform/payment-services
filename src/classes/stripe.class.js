@@ -2,6 +2,10 @@ let _ = require("lodash")
 let stripeConfig = require("../config/stripe/stripeConfig");
 
 class Stripe {
+    /**
+     * constructor
+     * @param {*} options 
+     */
     constructor(options) {
         console.log("inside stripe class..");
         console.log(options)
@@ -13,6 +17,10 @@ class Stripe {
         );
     }
 
+    /**
+     * do direct charge
+     * @param {*} data 
+     */
     doCharge(data) {
         console.log("inside stripe docharge..");
         //console.log(this.stripe);
@@ -26,10 +34,13 @@ class Stripe {
                 customer: data.customerId
             }, function(err, charge) {
                 // asynchronously called
-                console.log(charge)
-                    //console.log('1212');
-
-                resolve(charge)
+                if (err) {
+                    resolve(err)
+                } else {
+                    console.log(charge)
+                        //console.log('1212');
+                    resolve(charge)
+                }
             });
         })
     }
@@ -65,7 +76,7 @@ class Stripe {
         })
     }
 
-     updateCharge(data) {
+    updateCharge(data) {
 
         console.log("inside updatedata..");
         console.log("data", data);
@@ -99,7 +110,7 @@ class Stripe {
         console.log("data", data);
 
         return new Promise((resolve, reject) => {
-        if (!_.has(data, 'id') && _.has(data, 'gateway')) {
+            if (!_.has(data, 'id') && _.has(data, 'gateway')) {
 
                 // let gte = "gt";
                 let filterByCreated = "gte";
@@ -120,7 +131,7 @@ class Stripe {
                 );
 
 
-        } else if (_.has(data, 'gateway') && _.has(data, 'id')) {
+            } else if (_.has(data, 'gateway') && _.has(data, 'id')) {
                 //console.log(hook.params.query);
                 this.stripe.subscriptions.retrieve(
                     data.id,
@@ -130,35 +141,35 @@ class Stripe {
                     }
                 );
 
-        }
-    })
+            }
+        })
     }
 
 
     createSubscription(data) {
 
-        console.log("inside createSubscription",data);
+        console.log("inside createSubscription", data);
         return new Promise((resolve, reject) => {
-        this.stripe.subscriptions.create({
-            customer: data.customer,
-            items: [{
-                plan: data.plan,
-            }, ]
-        }, function(err, subscription) {
-            if(err){
-                console.log(err);
-            }else{
-                resolve(subscription);
-            }
-        });
-    })
+            this.stripe.subscriptions.create({
+                customer: data.customer,
+                items: [{
+                    plan: data.plan,
+                }, ]
+            }, function(err, subscription) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    resolve(subscription);
+                }
+            });
+        })
     }
 
     deleteSubscription(data) {
 
-        console.log("inside deleteSubscription",data);
+        console.log("inside deleteSubscription", data);
         return new Promise((resolve, reject) => {
-        this.stripe.subscriptions.del(
+            this.stripe.subscriptions.del(
                 data.id,
                 function(err, confirmation) {
                     resolve(confirmation);
@@ -168,103 +179,100 @@ class Stripe {
 
     getCustomer(data) {
 
-        console.log("inside getcustomers",data);
+        console.log("inside getcustomers", data);
         return new Promise((resolve, reject) => {
 
-        if(!_.has(data, 'id') && _.has(data, 'gateway'))  {
-            this.stripe.customers.list(
-                {"limit" : 15},
-                function(err, customers) {
-                resolve(customers);
-                });
-             }else if (_.has(data, 'gateway') && _.has(data, 'id')){
-                    this.stripe.customers.retrieve(
-                        data.id,
+            if (!_.has(data, 'id') && _.has(data, 'gateway')) {
+                this.stripe.customers.list({ "limit": 15 },
+                    function(err, customers) {
+                        resolve(customers);
+                    });
+            } else if (_.has(data, 'gateway') && _.has(data, 'id')) {
+                this.stripe.customers.retrieve(
+                    data.id,
                     function(err, customer) {
                         console.log(customer);
                         if (customer) {
-                            console.log("customer",customer);
-                            }
-                        else if (customer == null){
+                            console.log("customer", customer);
+                        } else if (customer == null) {
                             hook.result = new errors.Conflict("This customer dosen't exists");
-                            }
-                            resolve(customer);
-                        });
-                    }
-            })
-        }
+                        }
+                        resolve(customer);
+                    });
+            }
+        })
+    }
 
     createCustomer(data) {
 
-        console.log("inside create customer",data);
+        console.log("inside create customer", data);
         //console.time("Timer");
         return new Promise((resolve, reject) => {
             //console.log("$$$$$$$$$$$$$$$$ ", this);
             let stripeInstance = this;
-             this.stripe.tokens.create({
-             card: {
-                "number": data.cardNumber,
-                "exp_month": data.expMonth,
-                "exp_year": data.expYear,
-                "cvc": data.cvc
+            this.stripe.tokens.create({
+                card: {
+                    "number": data.cardNumber,
+                    "exp_month": data.expMonth,
+                    "exp_year": data.expYear,
+                    "cvc": data.cvc
                 }
             }, function(err, token) {
-                if(err){
-                     console.log("error ", err);
-                }
-                else
-                {
+                if (err) {
+                    console.log("error ", err);
+                } else {
                     stripeInstance.stripe.customers.create({
-                    description: 'Customer for liam.moore@example.com',
-                    source: token.id // obtained with Stripe.js
+                        description: 'Customer for liam.moore@example.com',
+                        source: token.id // obtained with Stripe.js
                     }, function(err, customer) {
-                            customer.tok_id = token.id ;
-                            resolve(customer);
-                            //console.timeEnd("Timer");
+                        customer.tok_id = token.id;
+                        resolve(customer);
+                        //console.timeEnd("Timer");
                     });
-                    }
-     // synchronously called
+                }
+                // synchronously called
 
             });
         })
     }
 
-    updateCustomer(data){
+    updateCustomer(data) {
 
-        console.log("data",data);
+        console.log("data", data);
         var customer = data.customer;
         delete data.gateway;
         delete data.customer;
-        console.log("data",data);
+        console.log("data", data);
 
-        console.log("inside update customer",data);
-        return new Promise ((resolve,reject) => {
+        console.log("inside update customer", data);
+        return new Promise((resolve, reject) => {
             this.stripe.customers.update(
-               customer, data, function(err, customer) {
-                // asynchronously called
-                resolve(customer);
+                customer, data,
+                function(err, customer) {
+                    // asynchronously called
+                    resolve(customer);
                 });
         })
     }
 
     deleteCustomer(data) {
 
-        console.log("inside delete customer",data);
+        console.log("inside delete customer", data);
         return new Promise((resolve, reject) => {
             this.stripe.customers.del(
                 data.id,
                 function(err, confirmation) {
                     console.log(confirmation);
-                        resolve(confirmation);
+                    resolve(confirmation);
                 });
-            })
-        }
+        })
+    }
 
     async createPlan(data) {
 
         console.log("111111111111111111 ", data)
         var modify_interval = this.modify_interval_func(data.gateway, data.interval);
-        let modifyPlanId = await this.modify_plan_id_func(data.gateway,data.name);
+        let modifyPlanId = await this.modify_plan_id_func(data.gateway, data.name);
         console.log(modify_interval);
         console.log("result  ", modifyPlanId);
         data.id = modifyPlanId.id;
@@ -274,14 +282,14 @@ class Stripe {
         return new Promise((resolve, reject) => {
 
             this.stripe.plans.create({
-            amount: data.amount,
-            interval: data.interval,
-            name: data.name,
-            currency: data.currency,
-            id: data.id
+                amount: data.amount,
+                interval: data.interval,
+                name: data.name,
+                currency: data.currency,
+                id: data.id
             }, function(err, plan) {
                 // asynchronously called
-                console.log("created plan ---- " , plan);
+                console.log("created plan ---- ", plan);
                 resolve(plan);
             })
         })
@@ -289,70 +297,69 @@ class Stripe {
     }
 
     modify_interval_func(gateway, interval) {
-     var new1 = eval(gateway + "Config.interval." + interval);
-     console.log("modify_interval_func",new1);
-      return eval(gateway + "Config.interval." + interval)
+        var new1 = eval(gateway + "Config.interval." + interval);
+        console.log("modify_interval_func", new1);
+        return eval(gateway + "Config.interval." + interval)
     }
 
     modify_plan_id_func(gateway, name) {
-    var str = name;
-    var foundresult = false;
-    str = str.replace(/\s+/g, '-').toLowerCase();
-    let modifyPlanIdData = {
-        "id": "fp-" + str
-    };
-    console.log("modifyPlanIdData",modifyPlanIdData);
-    return modifyPlanIdData;
+        var str = name;
+        var foundresult = false;
+        str = str.replace(/\s+/g, '-').toLowerCase();
+        let modifyPlanIdData = {
+            "id": "fp-" + str
+        };
+        console.log("modifyPlanIdData", modifyPlanIdData);
+        return modifyPlanIdData;
     }
 
 
     getPlan(data) {
 
-        console.log("inside getplan",data);
+        console.log("inside getplan", data);
 
         return new Promise((resolve, reject) => {
 
-        if(!_.has(data, 'id') && _.has(data, 'gateway'))  {
-            this.stripe.plans.list(
-                {"limit" : 15},
-                function(err, plans) {
-                console.log("plans",plans);
-                resolve(plans);
-                });
-        }else if (_.has(data, 'gateway') && _.has(data, 'id')){
-         this.stripe.plans.retrieve(
-            data.id,
-            function(err, plan) {
-            console.log("plan",plan);
-            resolve(plan);
-         });
-        }
-     })
+            if (!_.has(data, 'id') && _.has(data, 'gateway')) {
+                this.stripe.plans.list({ "limit": 15 },
+                    function(err, plans) {
+                        console.log("plans", plans);
+                        resolve(plans);
+                    });
+            } else if (_.has(data, 'gateway') && _.has(data, 'id')) {
+                this.stripe.plans.retrieve(
+                    data.id,
+                    function(err, plan) {
+                        console.log("plan", plan);
+                        resolve(plan);
+                    });
+            }
+        })
     }
 
     updatePlan(data) {
 
         return new Promise((resolve, reject) => {
-            let stripe_interval =   this.modify_interval_func(data.gateway ,data.interval);
+            let stripe_interval = this.modify_interval_func(data.gateway, data.interval);
             console.log(stripe_interval);
             this.stripe.plans.update(data.id, {
                 name: data.name
-                }, function(err, plan) {
-                        console.log(plan);
-                        resolve(plan);
-                });
+            }, function(err, plan) {
+                console.log(plan);
+                resolve(plan);
+            });
         })
     }
 
     deletePlan(data) {
 
         return new Promise((resolve, reject) => {
-        this.stripe.plans.del(
-            data.id,
-            function(err, confirmation) {
-              console.log(confirmation);
-              resolve(confirmation);
-            });
+            this.stripe.plans.del(
+                data.id,
+                function(err, confirmation) {
+                    console.log(confirmation);
+                    resolve(confirmation);
+                });
         })
     }
 
