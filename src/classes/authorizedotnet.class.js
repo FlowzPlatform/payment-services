@@ -428,7 +428,7 @@ class AuthorizeDotNet {
           	arbSubscription.setPaymentSchedule(paymentScheduleType);
           	arbSubscription.setAmount(10);
           	arbSubscription.setTrialAmount(0);
-          	arbSubscription.setProfile(customerProfileIdType);
+          	arbSubsc ription.setProfile(customerProfileIdType);
 
           	var createRequest = new ApiContracts.ARBCreateSubscriptionRequest();
           	createRequest.setMerchantAuthentication(this.merchantAuth);
