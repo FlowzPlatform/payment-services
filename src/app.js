@@ -18,9 +18,9 @@ const appHooks = require('./app.hooks');
 const app = feathers();
 
 app.use(function(req, res, next) {
-    console.log("app.use........" + Object.keys(req));
+    //console.log("app.use........" + Object.keys(req));
     //console.log("res  "+ JSON.stringify(req.res));
-    console.log("==" + req.headers['x-api-token'] + "--");
+    //console.log("==" + req.headers['x-api-token'] + "--");
     this.XApiToken = req.headers['x-api-token'];
     this.XApiLogin = req.headers['x-api-login'];
     res.header("Access-Control-Allow-Origin", "*");
