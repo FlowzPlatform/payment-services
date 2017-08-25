@@ -441,6 +441,7 @@ class AuthorizeDotNet {
     createSubscription(data) {
 
         return new Promise((resolve, reject) => {
+          //resolve(ApiContracts.ARBSubscriptionUnitEnum)
             var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
 
             var interval = new ApiContracts.PaymentScheduleType.Interval();
@@ -449,7 +450,7 @@ class AuthorizeDotNet {
 
             var paymentScheduleType = new ApiContracts.PaymentScheduleType();
             paymentScheduleType.setInterval(interval);
-            paymentScheduleType.setStartDate("2020-08-30");
+            paymentScheduleType.setStartDate("2020-09-30");
             paymentScheduleType.setTotalOccurrences(5);
             paymentScheduleType.setTrialOccurrences(0);
 
