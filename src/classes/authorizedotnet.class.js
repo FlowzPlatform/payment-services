@@ -458,21 +458,12 @@ class AuthorizeDotNet {
             customerProfileIdType.setCustomerPaymentProfileId("1501241138");
             customerProfileIdType.setCustomerAddressId("1501271398");
 
-<<<<<<< HEAD
-          	var arbSubscription = new ApiContracts.ARBSubscriptionType();
-          	arbSubscription.setName("Sample subscription");
-          	arbSubscription.setPaymentSchedule(paymentScheduleType);
-          	arbSubscription.setAmount(10);
-          	arbSubscription.setTrialAmount(0);
-          	arbSubsc ription.setProfile(customerProfileIdType);
-=======
             var arbSubscription = new ApiContracts.ARBSubscriptionType();
             arbSubscription.setName("Sample subscription");
             arbSubscription.setPaymentSchedule(paymentScheduleType);
             arbSubscription.setAmount(10);
             arbSubscription.setTrialAmount(0);
             arbSubscription.setProfile(customerProfileIdType);
->>>>>>> 706fd57946ba2c375b2ea2a453fbd7a7499377a7
 
             var createRequest = new ApiContracts.ARBCreateSubscriptionRequest();
             createRequest.setMerchantAuthentication(this.merchantAuth);
