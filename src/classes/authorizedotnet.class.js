@@ -444,28 +444,32 @@ class AuthorizeDotNet {
           //resolve(ApiContracts.ARBSubscriptionUnitEnum)
             var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
 
-            var interval = new ApiContracts.PaymentScheduleType.Interval();
-            interval.setLength(1);
-            interval.setUnit(ApiContracts.ARBSubscriptionUnitEnum.MONTHS);
 
-            var paymentScheduleType = new ApiContracts.PaymentScheduleType();
-            paymentScheduleType.setInterval(interval);
-            paymentScheduleType.setStartDate("2020-09-30");
-            paymentScheduleType.setTotalOccurrences(5);
-            paymentScheduleType.setTrialOccurrences(0);
+            //resolve(ApiContracts.ARBSubscriptionUnitEnum);
+          	var interval = new ApiContracts.PaymentScheduleType.Interval();
+            //console.log("data.subscription.paymentSchedule.interval.length",data.subscription.paymentSchedule.interval.length);
+          	interval.setLength(data.subscription.paymentSchedule.interval.lenth);
+          	interval.setUnit(ApiContracts.ARBSubscriptionUnitEnum.MONTHS);
 
-            var customerProfileIdType = new ApiContracts.CustomerProfileIdType();
-            customerProfileIdType.setCustomerProfileId("1501717563");
-            customerProfileIdType.setCustomerPaymentProfileId("1501241138");
-            customerProfileIdType.setCustomerAddressId("1501271398");
+          	var paymentScheduleType = new ApiContracts.PaymentScheduleType();
+            console.log("data.subscription.paymentSchedule.interval",data.subscription.paymentSchedule.interval);
+          	paymentScheduleType.setInterval(interval);
+          	paymentScheduleType.setStartDate(data.subscription.paymentSchedule.startDate);
+          	paymentScheduleType.setTotalOccurrences(data.subscription.paymentSchedule.totalOccurrences);
+          	paymentScheduleType.setTrialOccurrences(data.subscription.paymentSchedule.trialOccurrences);
 
+          	var customerProfileIdType = new ApiContracts.CustomerProfileIdType();
+          	customerProfileIdType.setCustomerProfileId(data.subscription.profile.customerProfileId);
+          	customerProfileIdType.setCustomerPaymentProfileId(data.subscription.profile.customerPaymentProfileId);
+          	customerProfileIdType.setCustomerAddressId(data.subscription.profile.customerAddressId);
 
-            var arbSubscription = new ApiContracts.ARBSubscriptionType();
-            arbSubscription.setName("Sample subscription");
-            arbSubscription.setPaymentSchedule(paymentScheduleType);
-            arbSubscription.setAmount(10);
-            arbSubscription.setTrialAmount(0);
-            arbSubscription.setProfile(customerProfileIdType);
+          	var arbSubscription = new ApiContracts.ARBSubscriptionType();
+          	arbSubscription.setName(data.subscription.name);
+          	arbSubscription.setPaymentSchedule(paymentScheduleType);
+          	arbSubscription.setAmount(data.subscription.amount);
+          	arbSubscription.setTrialAmount(data.subscription.trialAmount);
+          	arbSubscription.setProfile(customerProfileIdType);
+
 
 
             var createRequest = new ApiContracts.ARBCreateSubscriptionRequest();
