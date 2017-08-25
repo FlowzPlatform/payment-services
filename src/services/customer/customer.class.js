@@ -64,10 +64,11 @@ class Service {
         if (data.gateway == "stripe")
         {
             let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
-            console.log(obj.abc());
+            //console.log(obj.abc());
             response = await obj.createCustomer(data)
         } else if (data.gateway == "authdotnet")
         {
+          console.log("inside authdotnet")
           let obj = new authdotnet({
               'api_login_key': appHooks.xtokenlogin,
               'api_trans_key': appHooks.xtoken

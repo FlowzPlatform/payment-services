@@ -97,7 +97,7 @@ class AuthorizeDotNet {
     createCustomer(data , callback)
     {
 
-
+      console.log("inside create customer")
     	var creditCard = new ApiContracts.CreditCardType();
     	creditCard.setCardNumber(data.cardNumber);
     	creditCard.setExpirationDate('0922');
@@ -112,11 +112,30 @@ class AuthorizeDotNet {
     	var paymentProfilesList = [];
     	paymentProfilesList.push(customerPaymentProfileType);
 
+      var customerShippingProfileType = new ApiContracts.CustomerAddressType();
+      console.log("------------------------------------------",data.address.firstName);
+      customerShippingProfileType.setFirstName(data.address.firstName);
+      customerShippingProfileType.setLastName(data.address.lastName);
+      customerShippingProfileType.setCompany(data.address.company);
+      customerShippingProfileType.setAddress(data.address.address);
+      customerShippingProfileType.setCity(data.address.city);
+      customerShippingProfileType.setState(data.address.state);
+      customerShippingProfileType.setZip(data.address.zip);
+      customerShippingProfileType.setCountry(data.address.county);
+      customerShippingProfileType.setPhoneNumber(data.address.phoneNumber);
+      customerShippingProfileType.setFaxNumber(data.address.faxNumber);
+
+
+      var shippingProfilesList = [];
+      shippingProfilesList.push(customerShippingProfileType)
+
     	var customerProfileType = new ApiContracts.CustomerProfileType();
     	customerProfileType.setMerchantCustomerId(data.merchantCustomerId);
     	customerProfileType.setDescription(data.description);
     	customerProfileType.setEmail(data.email);
     	customerProfileType.setPaymentProfiles(paymentProfilesList);
+      customerProfileType.setShipToList(shippingProfilesList);
+
 
     	var createRequest = new ApiContracts.CreateCustomerProfileRequest();
     	createRequest.setProfile(customerProfileType);
