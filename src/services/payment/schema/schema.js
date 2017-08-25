@@ -9,7 +9,7 @@ module.exports = {
             "gateway": {
                 "description": "gateway in string",
                 "type": "string",
-                "enum": ["stripe", "authrizeDotNet"]
+                "enum": ["stripe", "authdotnet"]
             },
             "amount": {
                 "description": "amount in Integer",
@@ -38,7 +38,7 @@ module.exports = {
             "gateway": {
                 "description": "gateway in string",
                 "type": "string",
-                "enum": ["stripe", "authrizeDotNet"]
+                "enum": ["stripe", "authdotnet"]
             },
             "chargeId": {
                 "description": "chargeId in string",
@@ -53,12 +53,12 @@ module.exports = {
         "required": ["gateway", "customerId"],
         "additionalProperties": false
     },
-    authorizeDotNet_payment_charge_schema: {
+    authdotnet_payment_charge_schema: {
         "properties": {
             "gateway": {
                 "description": "gateway in string",
                 "type": "string",
-                "enum": ["stripe", "authorizeDotNet"]
+                "enum": ["stripe", "authdotnet"]
             },
             "amount": {
                 "description": "amount in Integer",
@@ -74,14 +74,14 @@ module.exports = {
                 "type": "string"
             }
         },
-        "required": ["gateway", "amount", "currency", "customerId"]
+        "required": ["gateway", "amount"]
     },
     stripe_payment_charge_retrive_schema: {
         "properties": {
             "gateway": {
                 "description": "gateway in string",
                 "type": "string",
-                "enum": ["stripe", "authrizeDotNet"]
+                "enum": ["stripe", "authdotnet"]
             },
             "chargeId": {
                 "description": "chargeId in string",
@@ -97,7 +97,7 @@ module.exports = {
             "gateway": {
                 "description": "gateway in string",
                 "type": "string",
-                "enum": ["stripe", "authrizeDotNet"]
+                "enum": ["stripe", "authdotnet"]
             },
             "description": {
                 "description": "description about charge in string",
