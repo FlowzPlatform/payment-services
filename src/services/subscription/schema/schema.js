@@ -40,7 +40,8 @@ module.exports = {
                       "description":"Contains information about the time between payments",
                       "properties":{
                         "length":{
-                          "description":"measurement of time"
+                          "description":"measurement of time",
+                          "type":"number"
                         },
                         "unit":{
                           "description":"unit of time"
@@ -64,6 +65,9 @@ module.exports = {
                 },
                 "amount":{
                   "description":"amount to be billed"
+                },
+                "currencycode":{
+                  "description":"currency supported"
                 },
                 "trialAmount":{
                   "description":"amount to be charged for each payment during the trial period"
@@ -94,14 +98,7 @@ module.exports = {
 
 
 
-
-
-
-
-
-
-
-   stripe_subscription_get_schema : {
+  stripe_subscription_get_schema : {
       "properties": {
         "gateway": {
             "type": "string",

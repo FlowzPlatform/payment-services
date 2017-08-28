@@ -445,8 +445,8 @@ class AuthorizeDotNet {
 
             //resolve(ApiContracts.ARBSubscriptionUnitEnum);
           	var interval = new ApiContracts.PaymentScheduleType.Interval();
-            //console.log("data.subscription.paymentSchedule.interval.length",data.subscription.paymentSchedule.interval.length);
-          	interval.setLength(data.subscription.paymentSchedule.interval.lenth);
+            console.log("data.subscription.paymentSchedule.interval.length",data.subscription.paymentSchedule.interval.length);
+          	interval.setLength(data.subscription.paymentSchedule.interval.length);
           	interval.setUnit(ApiContracts.ARBSubscriptionUnitEnum.MONTHS);
 
           	var paymentScheduleType = new ApiContracts.PaymentScheduleType();
@@ -465,6 +465,7 @@ class AuthorizeDotNet {
           	arbSubscription.setName(data.subscription.name);
           	arbSubscription.setPaymentSchedule(paymentScheduleType);
           	arbSubscription.setAmount(data.subscription.amount);
+            arbSubscription.setCurrencyCode(data.subscription.currencycode);
           	arbSubscription.setTrialAmount(data.subscription.trialAmount);
           	arbSubscription.setProfile(customerProfileIdType);
 
@@ -473,7 +474,7 @@ class AuthorizeDotNet {
             createRequest.setMerchantAuthentication(this.merchantAuth);
             createRequest.setSubscription(arbSubscription);
 
-            console.log(JSON.stringify(createRequest.getJSON(), null, 2));
+            console.log("####################################################",JSON.stringify(createRequest.getJSON(), null, 2));
 
             var ctrl = new ApiControllers.ARBCreateSubscriptionController(createRequest.getJSON());
 
