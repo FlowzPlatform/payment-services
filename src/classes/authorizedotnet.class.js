@@ -439,18 +439,23 @@ class AuthorizeDotNet {
     /////////  SUBSCRIPTION   ///////////
 
     createSubscription(data) {
-
+        let setUnit = data.subscription.paymentSchedule.interval.unit;
         return new Promise((resolve, reject) => {
+          //resolve(ApiContracts.ARBSubscriptionUnitEnum)
             var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
+
 
             //resolve(ApiContracts.ARBSubscriptionUnitEnum);
           	var interval = new ApiContracts.PaymentScheduleType.Interval();
-            console.log("data.subscription.paymentSchedule.interval.length",data.subscription.paymentSchedule.interval.length);
+
+            //console.log("data.subscription.paymentSchedule.interval.length",data.subscription.paymentSchedule.interval.length);
           	interval.setLength(data.subscription.paymentSchedule.interval.length);
-          	interval.setUnit(ApiContracts.ARBSubscriptionUnitEnum.MONTHS);
+          	interval.setUnit(eval("ApiContracts.ARBSubscriptionUnitEnum."+setUnit));
+
 
           	var paymentScheduleType = new ApiContracts.PaymentScheduleType();
-            console.log("data.subscription.paymentSchedule.interval",data.subscription.paymentSchedule.interval);
+
+            //console.log("data.subscription.paymentSchedule.interval",data.subscription.paymentSchedule.interval);
           	paymentScheduleType.setInterval(interval);
           	paymentScheduleType.setStartDate(data.subscription.paymentSchedule.startDate);
           	paymentScheduleType.setTotalOccurrences(data.subscription.paymentSchedule.totalOccurrences);
@@ -470,11 +475,10 @@ class AuthorizeDotNet {
           	arbSubscription.setProfile(customerProfileIdType);
 
 
+
             var createRequest = new ApiContracts.ARBCreateSubscriptionRequest();
             createRequest.setMerchantAuthentication(this.merchantAuth);
             createRequest.setSubscription(arbSubscription);
-
-            console.log("####################################################",JSON.stringify(createRequest.getJSON(), null, 2));
 
             var ctrl = new ApiControllers.ARBCreateSubscriptionController(createRequest.getJSON());
 

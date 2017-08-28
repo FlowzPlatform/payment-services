@@ -41,10 +41,14 @@ module.exports = {
                       "properties":{
                         "length":{
                           "description":"measurement of time",
-                          "type":"number"
+
+                          'type' : 'number'
+
                         },
                         "unit":{
-                          "description":"unit of time"
+                          "description":"unit of time",
+                          "type" : "string",
+                          "enum" : ["MONTHS" , "DAYS"]
                         }
                       },
                       "required":["length"],
