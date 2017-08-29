@@ -1,5 +1,5 @@
 let _ = require("lodash")
-let stripeConfig = require("../config/stripe/stripeConfig");
+let stripeConfig = require("../../../config/stripe/stripeConfig");
 
 class Stripe {
     /**

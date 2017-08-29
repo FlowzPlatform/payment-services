@@ -36,6 +36,7 @@ module.exports = {
 };
 
 function before_all_service(hook) {
+  console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& " , hook);
     //console.log("bfore all service :::::::::::::: " + this.XApiToken)
     module.exports.xtoken = this.XApiToken;
     if (this.XApiLogin) {

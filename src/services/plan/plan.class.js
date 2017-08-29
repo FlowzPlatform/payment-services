@@ -1,7 +1,7 @@
 const Ajv = require('ajv');
 const configParams = require("../../config.js");
 let _ = require("lodash")
-const schema = require("./schema/schema.js")
+//const schema = require("./schema/schema.js");
 let feathersErrors = require('feathers-errors');
 let errors = feathersErrors.errors;
 //let stripeConfig = require("../../config/stripe/stripeConfig");
@@ -29,16 +29,24 @@ class Service {
         console.log("inside find",params.query.gateway);
         //console.log(params);
         let response;
-        let schemaName = eval("schema."+params.query.gateway + "_plan_get_schema");
+      //  let schemaName = eval("schema."+params.query.gateway + "_plan_get_schema");
+        const schema1 = require("../../plugin/"+params.query.gateway+"/schema/plan/schema.js")
+
+
+        let schemaName = schema1.get ;
         console.log("schemaName",schemaName);
         this.validateSchema(params.query, schemaName)
 
-        if (params.query.gateway == "stripe") {
-            let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
-            response = await obj.getPlan(params.query);
-        } else if (params.query.gateway == "authorizeDotNet") {
-            console.log("inside authnet...");
-          }
+        const class1 = require("../../plugin/"+params.query.gateway+"/class/class.js")
+        let obj = new class1 ({'secret_key': appHooks.xtoken })
+        response = await obj.getPlan(params.query);
+
+        // if (params.query.gateway == "stripe") {
+        //     let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
+        //     response = await obj.getPlan(params.query);
+        // } else if (params.query.gateway == "authorizeDotNet") {
+        //     console.log("inside authnet...");
+        // }
 
         return response;
   }
@@ -51,16 +59,22 @@ class Service {
 
   async create (data, params) {
      console.log("inside create", data);
-        let schemaName = eval("schema."+ data.gateway + "_plan_create_schema");
+        //let schemaName = eval("schema."+ data.gateway + "_plan_create_schema");
+        const schema1 = require("../../plugin/"+data.gateway+"/schema/plan/schema.js")
+        let schemaName = schema1.create ;
         this.validateSchema(data, schemaName)
 
         let response;
-        if (data.gateway == "stripe") {
-            let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
-            response = await obj.createPlan(data)
-        } else if (data.gateway == "authorizeDotNet") {
-            console.log("inside authnet..." + authDotnet);
-          }
+        const class1 = require("../../plugin/"+params.query.gateway+"/class/class.js")
+        let obj = new class1 ({'secret_key': appHooks.xtoken })
+        response = await obj.createPlan(params.query);
+
+        // if (data.gateway == "stripe") {
+        //     let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
+        //     response = await obj.createPlan(data)
+        // } else if (data.gateway == "authorizeDotNet") {
+        //     console.log("inside authnet..." + authDotnet);
+        //   }
         return response;
   }
 
@@ -72,31 +86,39 @@ class Service {
 
   async patch(id, data) {
         console.log("inside patch",data);
-        let schemaName = eval("schema."+ data.gateway + "_plan_update_schema");
+        //let schemaName = eval("schema."+ data.gateway + "_plan_update_schema");
+        const schema1 = require("../../plugin/"+data.gateway+"/schema/plan/schema.js")
+        let schemaName = schema1.update ;
         this.validateSchema(data, schemaName);
         let response;
 
-        if(data.gateway == 'stripe'){
-            let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
-            response = await obj.updatePlan(data)
-        } else if (data.gateway == "authorizeDotNet") {
-            console.log("inside authnet..." + authDotnet);
-          }
+        const class1 = require("../../plugin/"+params.query.gateway+"/class/class.js")
+        let obj = new class1 ({'secret_key': appHooks.xtoken })
+        response = await obj.updatePlan(params.query);
+
+        // if(data.gateway == 'stripe'){
+        //     let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
+        //     response = await obj.updatePlan(data)
+        // } else if (data.gateway == "authorizeDotNet") {
+        //     console.log("inside authnet..." + authDotnet);
+        //   }
         return response;
     }
 
   async remove (id, params) {
         console.log("inside remove", params.query.gateway);
-        let schemaName = eval("schema." + params.query.gateway + "_plan_delete_schema");
+        //let schemaName = eval("schema." + params.query.gateway + "_plan_delete_schema");
+        const schema1 = require("../../plugin/"+params.query.gateway+"/schema/plan/schema.js")
+        let schemaName = schema1.delete ;
         console.log("schema",schemaName);
         this.validateSchema(params.query, schemaName);
         let response;
-        if (params.query.gateway == "stripe") {
-            let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
-            response = await obj.deletePlan(params.query)
-        } else if (params.query.gateway == "authorizeDotNet") {
-                console.log("inside authnet..." + authDotnet);
-          }
+
+        const class1 = require("../../plugin/"+params.query.gateway+"/class/class.js")
+        let obj = new class1 ({'secret_key': appHooks.xtoken })
+        response = await obj.deletePlan(params.query);
+
+
         return response;
   }
 

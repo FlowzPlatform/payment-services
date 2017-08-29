@@ -23,6 +23,7 @@ app.use(function(req, res, next) {
     //console.log("==" + req.headers['x-api-token'] + "--");
     this.XApiToken = req.headers['x-api-token'];
     this.XApiLogin = req.headers['x-api-login'];
+    //req.feathers = req.headers['x-api-token'];
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
