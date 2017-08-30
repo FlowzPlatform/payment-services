@@ -32,7 +32,9 @@ class Service {
         console.log("inside find");
         //console.log(params);
         let response;
-        let schemaName = eval("schema." + params.query.gateway + "_payment_charge_find_schema");
+        // let schemaName = eval("schema." + params.query.gateway + "_payment_charge_find_schema");
+        const schema1 = require("../../plugin/"+params.query.gateway+"/schema/payment/schema.js")
+        let schemaName = schema1.get ;
         this.validateSchema(params.query, schemaName)
 
         if (params.query.gateway == "stripe") {
@@ -56,7 +58,9 @@ class Service {
 
     async create(data, params) {
         console.log("inside create", data);
-        let schemaName = eval("schema." + data.gateway + "_payment_charge_schema");
+        // let schemaName = eval("schema." + data.gateway + "_payment_charge_schema");
+        const schema1 = require("../../plugin/"+data.gateway+"/schema/payment/schema.js")
+        let schemaName = schema1.create ;
         //this.validate(data);
         this.validateSchema(data, schemaName)
 
@@ -65,13 +69,6 @@ class Service {
 
         if (data.gateway == "stripe") {
 
-            /*
-            const stripe = require("stripe")(
-                appHooks.xtoken
-            );
-
-            let response = createCharge(data, stripe);
-            */
             let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
             response = await obj.doCharge(data)
         } else if (data.gateway == "authdotnet") {
@@ -103,7 +100,9 @@ class Service {
 
     async patch(id, data) {
         console.log("inside patch", data);
-        let schemaName = eval("schema." + data.gateway + "_payment_charge_update_schema");
+        //let schemaName = eval("schema." + data.gateway + "_payment_charge_update_schema");
+        const schema1 = require("../../plugin/"+data.gateway+"/schema/payment/schema.js")
+        let schemaName = schema1.update ;
         this.validateSchema(data, schemaName);
         let response;
 

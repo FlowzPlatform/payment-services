@@ -24,13 +24,11 @@ class Service {
   }
 
   async find (params) {
-     console.log("customer find class");
-        console.log("inside.." + appHooks.xtoken);
 
-        console.log("inside find",params.query.gateway);
-        //console.log(params);
         let response;
-        let schemaName = eval("schema." +params.query.gateway + "_customer_get_schema");
+        let schema1 = require("../../plugin/"+params.query.gateway+"/schema/customer/schema.js")
+        let schemaName = schema1.get ;
+        //let schemaName = eval("schema." +params.query.gateway + "_customer_get_schema");
         console.log("schemaName",schemaName);
         this.validateSchema(params.query, schemaName)
 
@@ -56,10 +54,12 @@ class Service {
   }
 
   async create (data, params) {
-        console.log("inside create");
-        let schemaName = eval("schema."+data.gateway + "_customer_create_schema");
-        console.log("schemaName #######" , schemaName);
+
+        let schema1 = require("../../plugin/"+params.query.gateway+"/schema/customer/schema.js")
+        let schemaName = schema1.create ;
+        //let schemaName = eval("schema."+data.gateway + "_customer_create_schema");/
         this.validateSchema(data, schemaName)
+
         let response;
         if (data.gateway == "stripe")
         {
@@ -84,11 +84,12 @@ class Service {
   }
 
   async patch(id, data) {
-        console.log("inside patch",data);
-        let schemaName = eval("schema." + data.gateway + "_customer_update_schema");
+        let schema1 = require("../../plugin/"+params.query.gateway+"/schema/customer/schema.js")
+        let schemaName = schema1.update ;
+        //let schemaName = eval("schema." + data.gateway + "_customer_update_schema");
         this.validateSchema(data, schemaName);
-        let response;
 
+        let response;
         if(data.gateway == 'stripe'){
             let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
             response = await obj.updateCustomer(data)
@@ -103,10 +104,12 @@ class Service {
     }
 
    async remove (id, params) {
-      console.log("inside remove", params.query.gateway);
-      let schemaName = eval("schema." + params.query.gateway + "_customer_delete_schema");
-        console.log("schema",schemaName);
+        //let schemaName = eval("schema." + params.query.gateway + "_customer_delete_schema");
+        let schema1 = require("../../plugin/"+params.query.gateway+"/schema/customer/schema.js")
+        let schemaName = schema1.delete ;
         this.validateSchema(params.query, schemaName);
+
+
         let response;
         if (params.query.gateway == "stripe") {
             let obj = new stripeClass({ 'secret_key': appHooks.xtoken });

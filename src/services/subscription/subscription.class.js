@@ -24,16 +24,13 @@ class Service {
   }
 
   async find (params) {
-    console.log("subscription find class");
-        console.log("inside.." + appHooks.xtoken);
 
-        console.log("inside find",params.query.gateway);
-        //console.log(params);
-        let response;
-        let schemaName = eval("schema." + params.query.gateway + "_subscription_get_schema");
-        console.log("schemaName",schemaName);
+        //let schemaName = eval("schema." + params.query.gateway + "_subscription_get_schema");
+        const schema1 = require("../../plugin/"+params.query.gateway+"/schema/subscription/schema.js")
+        let schemaName = schema1.get ;
         this.validateSchema(params.query, schemaName)
 
+        let response;
         if (params.query.gateway == "stripe") {
             let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
             response = await obj.getSubscription(params.query);
@@ -53,9 +50,9 @@ class Service {
 
   async create (data, params) {
 
-        console.log("inside create", data);
-        let schemaName = eval("schema." + data.gateway + "_subscription_create_schema");
-        console.log("schema",schemaName);
+        //let schemaName = eval("schema." + data.gateway + "_subscription_create_schema");
+        const schema1 = require("../../plugin/"+params.query.gateway+"/schema/subscription/schema.js")
+        let schemaName = schema1.get ;
         this.validateSchema(data, schemaName);
         let response;
         if (data.gateway == "stripe") {

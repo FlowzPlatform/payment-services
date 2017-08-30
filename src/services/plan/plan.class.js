@@ -1,14 +1,12 @@
 const Ajv = require('ajv');
 const configParams = require("../../config.js");
 let _ = require("lodash")
-//const schema = require("./schema/schema.js");
 let feathersErrors = require('feathers-errors');
 let errors = feathersErrors.errors;
 //let stripeConfig = require("../../config/stripe/stripeConfig");
 const appHooks = require('../../app.hooks');
-
 const authDotnet = require('../../classes/authorizedotnet.class.js');
-const stripeClass = require('../../classes/stripe.class.js');
+//const stripeClass = require('../../classes/stripe.class.js');
 
 let availableGateways = ["paypal", "stripe", "authorizeDotNet"];
 
@@ -23,31 +21,15 @@ class Service {
   }
 
   async find (params) {
-    console.log("plan find class");
-        console.log("inside.." + appHooks.xtoken);
-
-        console.log("inside find",params.query.gateway);
-        //console.log(params);
         let response;
       //  let schemaName = eval("schema."+params.query.gateway + "_plan_get_schema");
         const schema1 = require("../../plugin/"+params.query.gateway+"/schema/plan/schema.js")
-
-
         let schemaName = schema1.get ;
-        console.log("schemaName",schemaName);
         this.validateSchema(params.query, schemaName)
 
         const class1 = require("../../plugin/"+params.query.gateway+"/class/class.js")
         let obj = new class1 ({'secret_key': appHooks.xtoken })
         response = await obj.getPlan(params.query);
-
-        // if (params.query.gateway == "stripe") {
-        //     let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
-        //     response = await obj.getPlan(params.query);
-        // } else if (params.query.gateway == "authorizeDotNet") {
-        //     console.log("inside authnet...");
-        // }
-
         return response;
   }
 
@@ -58,23 +40,16 @@ class Service {
   }
 
   async create (data, params) {
-     console.log("inside create", data);
+    console.log(data);
         //let schemaName = eval("schema."+ data.gateway + "_plan_create_schema");
         const schema1 = require("../../plugin/"+data.gateway+"/schema/plan/schema.js")
         let schemaName = schema1.create ;
         this.validateSchema(data, schemaName)
 
         let response;
-        const class1 = require("../../plugin/"+params.query.gateway+"/class/class.js")
+        const class1 = require("../../plugin/"+data.gateway+"/class/class.js")
         let obj = new class1 ({'secret_key': appHooks.xtoken })
-        response = await obj.createPlan(params.query);
-
-        // if (data.gateway == "stripe") {
-        //     let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
-        //     response = await obj.createPlan(data)
-        // } else if (data.gateway == "authorizeDotNet") {
-        //     console.log("inside authnet..." + authDotnet);
-        //   }
+        response = await obj.createPlan(data);
         return response;
   }
 
@@ -85,48 +60,32 @@ class Service {
   }
 
   async patch(id, data) {
-        console.log("inside patch",data);
         //let schemaName = eval("schema."+ data.gateway + "_plan_update_schema");
         const schema1 = require("../../plugin/"+data.gateway+"/schema/plan/schema.js")
         let schemaName = schema1.update ;
         this.validateSchema(data, schemaName);
         let response;
-
-        const class1 = require("../../plugin/"+params.query.gateway+"/class/class.js")
+        const class1 = require("../../plugin/"+data.gateway+"/class/class.js")
         let obj = new class1 ({'secret_key': appHooks.xtoken })
-        response = await obj.updatePlan(params.query);
-
-        // if(data.gateway == 'stripe'){
-        //     let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
-        //     response = await obj.updatePlan(data)
-        // } else if (data.gateway == "authorizeDotNet") {
-        //     console.log("inside authnet..." + authDotnet);
-        //   }
+        response = await obj.updatePlan(data);
         return response;
     }
 
   async remove (id, params) {
-        console.log("inside remove", params.query.gateway);
         //let schemaName = eval("schema." + params.query.gateway + "_plan_delete_schema");
         const schema1 = require("../../plugin/"+params.query.gateway+"/schema/plan/schema.js")
         let schemaName = schema1.delete ;
-        console.log("schema",schemaName);
         this.validateSchema(params.query, schemaName);
         let response;
-
         const class1 = require("../../plugin/"+params.query.gateway+"/class/class.js")
         let obj = new class1 ({'secret_key': appHooks.xtoken })
         response = await obj.deletePlan(params.query);
-
-
         return response;
   }
 
    validateSchema(data, schemaName) {
-        console.log(schemaName)
         let validateSc = ajv.compile(schemaName);
         let valid = validateSc(data);
-
         if (!valid) {
             throw new errors.NotAcceptable('user input not valid', validateSc.errors);
         }
