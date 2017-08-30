@@ -24,27 +24,13 @@ class Service {
   }
 
   async find (params) {
-
         let response;
         let schema1 = require("../../plugin/"+params.query.gateway+"/schema/customer/schema.js")
         let schemaName = schema1.get ;
-        //let schemaName = eval("schema." +params.query.gateway + "_customer_get_schema");
-        console.log("schemaName",schemaName);
         this.validateSchema(params.query, schemaName)
-
-        if (params.query.gateway == "stripe") {
-            let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
-            response = await obj.getCustomer(params.query);
-        } else if (params.query.gateway == "authdotnet") {
-          let obj = new authdotnet({
-              'api_login_key': appHooks.xtokenlogin,
-              'api_trans_key': appHooks.xtoken
-          });
-          response = await obj.getCustomer(params.query);
-        }
-
+        const obj = require('../../plugin/' +params.query.gateway+ '/init.js');
+        response = await obj.paymentGateway.getCustomer(params.query);
         return response;
-
   }
 
   get (id, params) {
@@ -54,28 +40,12 @@ class Service {
   }
 
   async create (data, params) {
-
-        let schema1 = require("../../plugin/"+params.query.gateway+"/schema/customer/schema.js")
+        let schema1 = require("../../plugin/"+data.gateway+"/schema/customer/schema.js")
         let schemaName = schema1.create ;
-        //let schemaName = eval("schema."+data.gateway + "_customer_create_schema");/
         this.validateSchema(data, schemaName)
-
         let response;
-        if (data.gateway == "stripe")
-        {
-            let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
-            //console.log(obj.abc());
-            response = await obj.createCustomer(data)
-        } else if (data.gateway == "authdotnet")
-        {
-          console.log("inside authdotnet")
-          let obj = new authdotnet({
-              'api_login_key': appHooks.xtokenlogin,
-              'api_trans_key': appHooks.xtoken
-          });
-          response = obj.createCustomer(data);
-        }
-
+        const obj = require('../../plugin/' +data.gateway+ '/init.js');
+        response = await obj.paymentGateway.createCustomer(data);
         return response;
   }
 
@@ -84,22 +54,12 @@ class Service {
   }
 
   async patch(id, data) {
-        let schema1 = require("../../plugin/"+params.query.gateway+"/schema/customer/schema.js")
+        let schema1 = require("../../plugin/"+data.gateway+"/schema/customer/schema.js")
         let schemaName = schema1.update ;
-        //let schemaName = eval("schema." + data.gateway + "_customer_update_schema");
         this.validateSchema(data, schemaName);
-
         let response;
-        if(data.gateway == 'stripe'){
-            let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
-            response = await obj.updateCustomer(data)
-        } else if (data.gateway == "authdotnet") {
-          let obj = new authdotnet({
-              'api_login_key': appHooks.xtokenlogin,
-              'api_trans_key': appHooks.xtoken
-          });
-          response = obj.updateCustomer(data);
-        }
+        const obj = require('../../plugin/' +data.gateway+ '/init.js');
+        response = await obj.paymentGateway.updateCustomer(data);
         return response;
     }
 
@@ -108,19 +68,9 @@ class Service {
         let schema1 = require("../../plugin/"+params.query.gateway+"/schema/customer/schema.js")
         let schemaName = schema1.delete ;
         this.validateSchema(params.query, schemaName);
-
-
         let response;
-        if (params.query.gateway == "stripe") {
-            let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
-            response = await obj.deleteCustomer(params.query)
-        } else if (params.query.gateway == "authdotnet") {
-          let obj = new authdotnet({
-              'api_login_key': appHooks.xtokenlogin,
-              'api_trans_key': appHooks.xtoken
-          });
-          response = await obj.deleteCustomer(params.query)
-        }
+        const obj = require('../../plugin/' +params.query.gateway+ '/init.js');
+        response = await obj.paymentGateway.deleteCustomer(params.query);
         return response;
   }
 

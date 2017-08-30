@@ -24,22 +24,13 @@ class Service {
   }
 
   async find (params) {
-
-        //let schemaName = eval("schema." + params.query.gateway + "_subscription_get_schema");
         const schema1 = require("../../plugin/"+params.query.gateway+"/schema/subscription/schema.js")
         let schemaName = schema1.get ;
-        this.validateSchema(params.query, schemaName)
-
+        this.validateSchema(params.query, schemaName);
         let response;
-        if (params.query.gateway == "stripe") {
-            let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
-            response = await obj.getSubscription(params.query);
-        } else if (params.query.gateway == "authorizeDotNet") {
-            console.log("inside authnet...");
-        }
-
+        const obj = require('../../plugin/' +params.query.gateway+ '/init.js');
+        response = await obj.paymentGateway.getSubscription(params.query);
         return response;
-
   }
 
   get (id, params) {
@@ -49,26 +40,13 @@ class Service {
   }
 
   async create (data, params) {
-
-        //let schemaName = eval("schema." + data.gateway + "_subscription_create_schema");
-        const schema1 = require("../../plugin/"+params.query.gateway+"/schema/subscription/schema.js")
-        let schemaName = schema1.get ;
+        const schema1 = require("../../plugin/"+data.gateway+"/schema/subscription/schema.js")
+        let schemaName = schema1.create ;
         this.validateSchema(data, schemaName);
         let response;
-        if (data.gateway == "stripe") {
-
-            let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
-            response = await obj.createSubscription(data)
-        } else if (data.gateway == "authdotnet") {
-          let obj = new authdotnet({
-              'api_login_key': appHooks.xtokenlogin,
-              'api_trans_key': appHooks.xtoken
-          });
-          response = await obj.createSubscription(data)
-        }
+        const obj = require('../../plugin/' +data.gateway+ '/init.js');
+        response = await obj.paymentGateway.createSubscription(data);
         return response;
-
-
   }
 
   update (id, data, params) {
@@ -80,18 +58,12 @@ class Service {
   }
 
   async remove (id, params) {
-      console.log("inside remove", params.query.gateway);
-      let schemaName = eval("schema." + params.query.gateway + "_subscription_delete_schema");
-        console.log("schema",schemaName);
+        const schema1 = require("../../plugin/"+params.query.gateway+"/schema/subscription/schema.js")
+        let schemaName = schema1.delete ;
         this.validateSchema(params.query, schemaName);
         let response;
-        if (params.query.gateway == "stripe") {
-
-            let obj = new stripeClass({ 'secret_key': appHooks.xtoken });
-            response = await obj.deleteSubscription(params.query)
-        } else if (params.query.gateway == "authorizeDotNet") {
-            console.log("inside authnet..." + authDotnet);
-        }
+        const obj = require('../../plugin/' +params.query.gateway+ '/init.js');
+        response = await obj.paymentGateway.deleteSubscription(params.query);
         return response;
   }
 

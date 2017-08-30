@@ -44,7 +44,6 @@ class Stripe {
             });
         })
     }
-
     getCharge(data) {
         console.log("inside getcharges...")
         console.log(1212);
@@ -75,7 +74,6 @@ class Stripe {
 
         })
     }
-
     updateCharge(data) {
 
         console.log("inside updatedata..");
@@ -103,6 +101,8 @@ class Stripe {
             );
         });
     }
+
+
 
     getSubscription(data) {
 
@@ -144,8 +144,6 @@ class Stripe {
             }
         })
     }
-
-
     createSubscription(data) {
 
         console.log("inside createSubscription", data);
@@ -164,7 +162,6 @@ class Stripe {
             });
         })
     }
-
     deleteSubscription(data) {
 
         console.log("inside deleteSubscription", data);
@@ -176,6 +173,8 @@ class Stripe {
                 });
         });
     }
+
+
 
     getCustomer(data) {
 
@@ -202,7 +201,6 @@ class Stripe {
             }
         })
     }
-
     createCustomer(data) {
 
         console.log("inside create customer", data);
@@ -235,7 +233,6 @@ class Stripe {
             });
         })
     }
-
     updateCustomer(data) {
 
         console.log("data", data);
@@ -254,7 +251,6 @@ class Stripe {
                 });
         })
     }
-
     deleteCustomer(data) {
 
         console.log("inside delete customer", data);
@@ -267,6 +263,8 @@ class Stripe {
                 });
         })
     }
+
+
 
     async createPlan(data) {
 
@@ -295,13 +293,11 @@ class Stripe {
         })
 
     }
-
     modify_interval_func(gateway, interval) {
         var new1 = eval(gateway + "Config.interval." + interval);
         console.log("modify_interval_func", new1);
         return eval(gateway + "Config.interval." + interval)
     }
-
     modify_plan_id_func(gateway, name) {
         var str = name;
         var foundresult = false;
@@ -312,16 +308,10 @@ class Stripe {
         console.log("modifyPlanIdData", modifyPlanIdData);
         return modifyPlanIdData;
     }
-
-
     getPlan(data) {
-
-        console.log("inside getplan", data);
-
         return new Promise((resolve, reject) => {
-
             if (!_.has(data, 'id') && _.has(data, 'gateway')) {
-                this.stripe.plans.list({ "limit": 15 },
+                this.stripe.plans.list({ "limit": data.limit , "starting_after": data.starting_after },
                     function(err, plans) {
                         console.log("plans", plans);
                         resolve(plans);
@@ -336,7 +326,6 @@ class Stripe {
             }
         })
     }
-
     updatePlan(data) {
 
         return new Promise((resolve, reject) => {
@@ -350,7 +339,6 @@ class Stripe {
             });
         })
     }
-
     deletePlan(data) {
 
         return new Promise((resolve, reject) => {

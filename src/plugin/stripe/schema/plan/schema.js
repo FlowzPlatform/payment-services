@@ -67,16 +67,23 @@ module.exports = {
       "required": ["id" , "gateway" ]
   },
 
-   get : {
+  get : {
       "properties": {
         "gateway": {
             "type": "string",
             "enum": ["stripe", "authrizeDotNet"]
         },
-          "id": {
-              "type": "string"
-          }
+        "id": {
+            "type": "string"
+        },
+        "limit":{
+            "description":"can set limitation of data"
+        },
+        "starting_after":{
+            "description":"cursor for use in pagination",
+            "type":"string"
+        }
       },
-      "required": ["id" , "gateway" ]
+      "required": ["gateway"]
   }
 }

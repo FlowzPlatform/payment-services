@@ -22,14 +22,11 @@ class Service {
 
   async find (params) {
         let response;
-      //  let schemaName = eval("schema."+params.query.gateway + "_plan_get_schema");
         const schema1 = require("../../plugin/"+params.query.gateway+"/schema/plan/schema.js")
         let schemaName = schema1.get ;
         this.validateSchema(params.query, schemaName)
-
-        const class1 = require("../../plugin/"+params.query.gateway+"/class/class.js")
-        let obj = new class1 ({'secret_key': appHooks.xtoken })
-        response = await obj.getPlan(params.query);
+        const obj = require('../../plugin/' +params.query.gateway+ '/init.js');
+        response = await obj.paymentGateway.getPlan(params.query)
         return response;
   }
 
@@ -40,16 +37,12 @@ class Service {
   }
 
   async create (data, params) {
-    console.log(data);
-        //let schemaName = eval("schema."+ data.gateway + "_plan_create_schema");
         const schema1 = require("../../plugin/"+data.gateway+"/schema/plan/schema.js")
         let schemaName = schema1.create ;
-        this.validateSchema(data, schemaName)
-
+        this.validateSchema(data, schemaName);
         let response;
-        const class1 = require("../../plugin/"+data.gateway+"/class/class.js")
-        let obj = new class1 ({'secret_key': appHooks.xtoken })
-        response = await obj.createPlan(data);
+        const obj = require('../../plugin/' +data.gateway+ '/init.js');
+        response = await obj.paymentGateway.createPlan(data)
         return response;
   }
 
@@ -65,9 +58,8 @@ class Service {
         let schemaName = schema1.update ;
         this.validateSchema(data, schemaName);
         let response;
-        const class1 = require("../../plugin/"+data.gateway+"/class/class.js")
-        let obj = new class1 ({'secret_key': appHooks.xtoken })
-        response = await obj.updatePlan(data);
+        const obj = require('../../plugin/' +data.gateway+ '/init.js');
+        response = await obj.paymentGateway.updatePlan(data);
         return response;
     }
 
@@ -77,9 +69,8 @@ class Service {
         let schemaName = schema1.delete ;
         this.validateSchema(params.query, schemaName);
         let response;
-        const class1 = require("../../plugin/"+params.query.gateway+"/class/class.js")
-        let obj = new class1 ({'secret_key': appHooks.xtoken })
-        response = await obj.deletePlan(params.query);
+        const obj = require('../../plugin/' +params.query.gateway+ '/init.js');
+        response = await obj.paymentGateway.deletePlan(params.query);
         return response;
   }
 
