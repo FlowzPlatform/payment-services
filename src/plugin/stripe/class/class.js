@@ -320,6 +320,9 @@ class Stripe {
                 this.stripe.plans.retrieve(
                     data.id,
                     function(err, plan) {
+                        if (err) {
+                          resolve(err)
+                        }
                         console.log("plan", plan);
                         resolve(plan);
                     });

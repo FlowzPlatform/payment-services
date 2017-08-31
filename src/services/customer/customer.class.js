@@ -1,6 +1,5 @@
 const Ajv = require('ajv');
-const configParams = require("../../config.js");
-let _ = require("lodash")
+let _ = require("lodash");
 const schema = require("./schema/schema.js")
 let feathersErrors = require('feathers-errors');
 let errors = feathersErrors.errors;

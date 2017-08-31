@@ -26,8 +26,9 @@ class Service {
         let schemaName = schema1.get ;
         this.validateSchema(params.query, schemaName)
         const obj = require('../../plugin/' +params.query.gateway+ '/init.js');
-        response = await obj.paymentGateway.getPlan(params.query)
-        return response;
+        let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
+        response = await paymentGateway.getPlan(params.query);
+        return response ;
   }
 
   get (id, params) {
