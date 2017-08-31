@@ -2,6 +2,7 @@ const Ajv = require('ajv');
 let _ = require("lodash")
 let feathersErrors = require('feathers-errors');
 let errors = feathersErrors.errors;
+const appHooks = require('../../app.hooks');
 
 let ajv = new Ajv({
     allErrors: true
@@ -22,7 +23,8 @@ class Service {
         let schemaName = schema1.get ;
         this.validateSchema(params.query, schemaName)
         const obj = require('../../plugin/' +params.query.gateway+ '/init.js');
-        response = await obj.paymentGateway.getCharge(params.query)
+        let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
+        response = await paymentGateway.getCharge(params.query);
         return response;
     }
 
@@ -41,7 +43,8 @@ class Service {
         this.validateSchema(data, schemaName)
         let response;
         const obj = require('../../plugin/' +data.gateway+ '/init.js');
-        response = await obj.paymentGateway.doCharge(data)
+        let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
+        response = await paymentGateway.doCharge(data);
         return response;
     }
 
@@ -59,7 +62,8 @@ class Service {
         this.validateSchema(data, schemaName);
         let response;
         const obj = require('../../plugin/' +data.gateway+ '/init.js');
-        response = await obj.paymentGateway.updateCharge(data);
+        let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
+        response = await paymentGateway.updateCharge(data);
         return response;
     }
 

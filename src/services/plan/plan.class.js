@@ -3,12 +3,7 @@ const configParams = require("../../config.js");
 let _ = require("lodash")
 let feathersErrors = require('feathers-errors');
 let errors = feathersErrors.errors;
-//let stripeConfig = require("../../config/stripe/stripeConfig");
 const appHooks = require('../../app.hooks');
-const authDotnet = require('../../classes/authorizedotnet.class.js');
-//const stripeClass = require('../../classes/stripe.class.js');
-
-let availableGateways = ["paypal", "stripe", "authorizeDotNet"];
 
 let ajv = new Ajv({
     allErrors: true
@@ -43,7 +38,8 @@ class Service {
         this.validateSchema(data, schemaName);
         let response;
         const obj = require('../../plugin/' +data.gateway+ '/init.js');
-        response = await obj.paymentGateway.createPlan(data)
+        let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
+        response = await paymentGateway.createPlan(data);
         return response;
   }
 
@@ -60,7 +56,8 @@ class Service {
         this.validateSchema(data, schemaName);
         let response;
         const obj = require('../../plugin/' +data.gateway+ '/init.js');
-        response = await obj.paymentGateway.updatePlan(data);
+        let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
+        response = await paymentGateway.updatePlan(data);
         return response;
     }
 
@@ -71,7 +68,8 @@ class Service {
         this.validateSchema(params.query, schemaName);
         let response;
         const obj = require('../../plugin/' +params.query.gateway+ '/init.js');
-        response = await obj.paymentGateway.deletePlan(params.query);
+        let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
+        response = await paymentGateway.deletePlan(params.query);
         return response;
   }
 

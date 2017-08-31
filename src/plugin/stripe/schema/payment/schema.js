@@ -50,7 +50,7 @@ module.exports = {
                 "type": "string"
             }
         },
-        "required": ["gateway", "customerId"],
+        "required": ["gateway"],
         "additionalProperties": false
     },
 

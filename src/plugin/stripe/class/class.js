@@ -55,7 +55,11 @@ class Stripe {
                     },
                     function(err, charges) {
                         // asynchronously called
-                        resolve(charges)
+                        if (err) {
+                          resolve(err)
+                        }else {
+                          resolve(charge)
+                        }
                             //return charges;
                     }
                 );
@@ -64,8 +68,11 @@ class Stripe {
                 this.stripe.charges.retrieve(
                     data.chargeId,
                     function(err, charge) {
-                        // asynchronously called
-                        resolve(charge)
+                        if (err) {
+                          resolve(err)
+                        } else {
+                          resolve(charge)
+                        }
                             //return charge;
                     }
                 );
@@ -287,8 +294,16 @@ class Stripe {
                 id: data.id
             }, function(err, plan) {
                 // asynchronously called
-                console.log("created plan ---- ", plan);
-                resolve(plan);
+                console.log("created plan ---- errrrr", err
+              );
+
+
+                if (err) {
+                  resolve (err)
+                }else {
+                  resolve (plan)
+                }
+
             })
         })
 
