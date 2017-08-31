@@ -1,5 +1,8 @@
 let _ = require("lodash")
 let stripeConfig = require("../../../config/stripe/stripeConfig");
+let feathersErrors = require('feathers-errors');
+let errors = feathersErrors.errors;
+
 
 class Stripe {
     /**
@@ -51,12 +54,16 @@ class Stripe {
 
             if (!_.has(data, 'chargeId') && _.has(data, 'gateway')) {
                 this.stripe.charges.list({
-                        customer: data.customerId
+                        customer: data.customerId,
+                        limit: data.limit,
+                        starting_after: data.starting_after
                     },
                     function(err, charges) {
-                        // asynchronously called
-                        resolve(charges)
-                            //return charges;
+                       if(err){
+                        resolve(err);
+                       }else{
+                        resolve(charges);
+                       }
                     }
                 );
             } else if (_.has(data, 'gateway') && _.has(data, 'chargeId')) {
@@ -64,9 +71,11 @@ class Stripe {
                 this.stripe.charges.retrieve(
                     data.chargeId,
                     function(err, charge) {
-                        // asynchronously called
-                        resolve(charge)
-                            //return charge;
+                        if(err){
+                            resolve(err);
+                        }else{
+                            resolve(charge);
+                        }
                     }
                 );
 
@@ -90,8 +99,7 @@ class Stripe {
                 function(err, charge) {
                     // asynchronously called
                     if (err) {
-                        console.log(err);
-                        console.log("err");
+                        resolve(err);
                     } else {
                         resolve(charge);
                         //console.log("response",charge);
@@ -126,7 +134,11 @@ class Stripe {
                 subscriptionList.created[filterByCreated] = createdAt
                 this.stripe.subscriptions.list(subscriptionList,
                     function(err, subscriptions) {
-                        resolve(subscriptions);
+                        if(err){
+                            resolve(err);
+                        }else{
+                            resolve(subscriptions);
+                        }
                     }
                 );
 
@@ -136,8 +148,11 @@ class Stripe {
                 this.stripe.subscriptions.retrieve(
                     data.id,
                     function(err, plan) {
-                        console.log(plan);
-                        resolve(plan);
+                        if(err){
+                            resolve(err);
+                        }else{
+                            resolve(plan);
+                        }
                     }
                 );
 
@@ -155,12 +170,36 @@ class Stripe {
                 }, ]
             }, function(err, subscription) {
                 if (err) {
-                    console.log(err);
+                    resolve(err);
                 } else {
                     resolve(subscription);
                 }
             });
         })
+    }
+
+    updateSubscription(data) {
+
+        console.log("inside update Subscription", data);
+        var subscriptionId = data.id;
+        delete data.id;
+        delete data.gateway;
+        return new Promise((resolve, reject) => {
+
+    
+            this.stripe.subscriptions.update(
+                subscriptionId,
+                data
+                , function(err, subscription) {
+                if (err) {
+                    resolve(err);
+                } else {
+                    resolve(subscription);
+                }
+            });
+        })
+
+
     }
     deleteSubscription(data) {
 
@@ -169,7 +208,11 @@ class Stripe {
             this.stripe.subscriptions.del(
                 data.id,
                 function(err, confirmation) {
+                   if (err) {
+                    resolve(err);
+                } else {
                     resolve(confirmation);
+                }
                 });
         });
     }
@@ -182,21 +225,24 @@ class Stripe {
         return new Promise((resolve, reject) => {
 
             if (!_.has(data, 'id') && _.has(data, 'gateway')) {
-                this.stripe.customers.list({ "limit": 15 },
+                 this.stripe.customers.list({"limit":data.limit,"starting_after":data.starting_after} ,
                     function(err, customers) {
-                        resolve(customers);
+                          if (err) {
+                                resolve(err);
+                            } else {
+                                resolve(customers);
+                            }
                     });
             } else if (_.has(data, 'gateway') && _.has(data, 'id')) {
                 this.stripe.customers.retrieve(
                     data.id,
                     function(err, customer) {
                         console.log(customer);
-                        if (customer) {
-                            console.log("customer", customer);
-                        } else if (customer == null) {
-                            hook.result = new errors.Conflict("This customer dosen't exists");
-                        }
-                        resolve(customer);
+                         if (err) {
+                                resolve(err);
+                            } else {
+                                resolve(customer);
+                            }
                     });
             }
         })
@@ -224,8 +270,11 @@ class Stripe {
                         source: token.id // obtained with Stripe.js
                     }, function(err, customer) {
                         customer.tok_id = token.id;
-                        resolve(customer);
-                        //console.timeEnd("Timer");
+                        if (err) {
+                                resolve(err);
+                            } else {
+                                resolve(customer);
+                            }
                     });
                 }
                 // synchronously called
@@ -247,7 +296,11 @@ class Stripe {
                 customer, data,
                 function(err, customer) {
                     // asynchronously called
-                    resolve(customer);
+                    if (err) {
+                            resolve(err);
+                        } else {
+                                resolve(customer);
+                        }
                 });
         })
     }
@@ -258,8 +311,11 @@ class Stripe {
             this.stripe.customers.del(
                 data.id,
                 function(err, confirmation) {
-                    console.log(confirmation);
-                    resolve(confirmation);
+                      if (err) {
+                                resolve(err);
+                            } else {
+                                resolve(confirmation);
+                            }
                 });
         })
     }
@@ -286,9 +342,11 @@ class Stripe {
                 currency: data.currency,
                 id: data.id
             }, function(err, plan) {
-                // asynchronously called
-                console.log("created plan ---- ", plan);
-                resolve(plan);
+                if (err) {
+                            resolve(err);
+                        } else {
+                            resolve(plan);
+                        }
             })
         })
 
@@ -320,8 +378,11 @@ class Stripe {
                 this.stripe.plans.retrieve(
                     data.id,
                     function(err, plan) {
-                        console.log("plan", plan);
-                        resolve(plan);
+                       if (err) {
+                        resolve(err);
+                        } else {
+                            resolve(plan);
+                        }
                     });
             }
         })
@@ -334,8 +395,11 @@ class Stripe {
             this.stripe.plans.update(data.id, {
                 name: data.name
             }, function(err, plan) {
-                console.log(plan);
-                resolve(plan);
+               if (err) {
+                        resolve(err);
+                        } else {
+                            resolve(plan);
+                        }
             });
         })
     }
@@ -345,8 +409,11 @@ class Stripe {
             this.stripe.plans.del(
                 data.id,
                 function(err, confirmation) {
-                    console.log(confirmation);
-                    resolve(confirmation);
+                   if (err) {
+                        resolve(err);
+                        } else {
+                            resolve(confirmation);
+                        }
                 });
         })
     }

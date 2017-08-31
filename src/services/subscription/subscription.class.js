@@ -53,8 +53,14 @@ class Service {
     return Promise.resolve(data);
   }
 
-  patch (id, data, params) {
-    return Promise.resolve(data);
+  async patch (id, data, params) {
+        let schema1 = require("../../plugin/"+data.gateway+"/schema/subscription/schema.js")
+        let schemaName = schema1.update ;
+        this.validateSchema(data, schemaName);
+        let response;
+        const obj = require('../../plugin/' +data.gateway+ '/init.js');
+        response = await obj.paymentGateway.updateSubscription(data);
+        return response;
   }
 
   async remove (id, params) {

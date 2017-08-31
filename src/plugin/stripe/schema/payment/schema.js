@@ -48,9 +48,13 @@ module.exports = {
             "limit": {
                 "description": "limit in string",
                 "type": "string"
+            },
+             "starting_after":{
+              "description":"cursor for use in pagination",
+              "type":"string"
             }
         },
-        "required": ["gateway", "customerId"],
+        "required": ["gateway"],
         "additionalProperties": false
     },
 

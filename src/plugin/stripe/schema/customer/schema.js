@@ -27,7 +27,8 @@ module.exports = {
                 "type": "string"
             }
         },
-        "required": ["cardNumber", "gateway", "expMonth", "expYear", "cvc"]
+        "required": ["cardNumber", "gateway", "expMonth", "expYear", "cvc"],
+         "additionalProperties": false
     },
 
 
@@ -41,7 +42,8 @@ module.exports = {
                 "type": "string"
             }
         },
-        "required": ["id", "gateway"]
+        "required": ["id", "gateway"],
+         "additionalProperties": false
     },
 
 
@@ -56,7 +58,7 @@ module.exports = {
               "description": "customerid in String",
               "type": "string"
             },
-            "desc":{
+            "description":{
                 "description": "Customer description in String",
                 "type": "string"
             },
@@ -65,7 +67,8 @@ module.exports = {
                 "type": "string"
             }
         },
-        "required":["customer"]
+        "required":["customer","gateway"],
+         "additionalProperties": false
      },
      
 
@@ -77,8 +80,16 @@ module.exports = {
             },
             "id": {
                 "type": "string"
+            },
+            "limit":{
+              "description":"can set limitation of data"
+            },
+            "starting_after":{
+              "description":"cursor for use in pagination",
+              "type":"string"
             }
         },
-        "required": ["id", "gateway"]
+        "required": ["gateway"],
+         "additionalProperties": false
     },
 }
