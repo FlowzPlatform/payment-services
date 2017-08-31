@@ -31,6 +31,7 @@
     "body-parser": "^1.17.2",
     "compression": "^1.7.0",
     "cors": "^2.8.3",
+    "decache": "^4.1.0",
     "feathers": "^2.1.4",
     "feathers-configuration": "^0.4.1",
     "feathers-errors": "^2.8.2",

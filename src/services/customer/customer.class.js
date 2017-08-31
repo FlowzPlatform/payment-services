@@ -1,6 +1,5 @@
 const Ajv = require('ajv');
-const configParams = require("../../config.js");
-let _ = require("lodash")
+let _ = require("lodash");
 const schema = require("./schema/schema.js")
 let feathersErrors = require('feathers-errors');
 let errors = feathersErrors.errors;
@@ -29,7 +28,8 @@ class Service {
         let schemaName = schema1.get ;
         this.validateSchema(params.query, schemaName)
         const obj = require('../../plugin/' +params.query.gateway+ '/init.js');
-        response = await obj.paymentGateway.getCustomer(params.query);
+        let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
+        response = await paymentGateway.getCustomer(params.query);
         return response;
   }
 
@@ -45,7 +45,8 @@ class Service {
         this.validateSchema(data, schemaName)
         let response;
         const obj = require('../../plugin/' +data.gateway+ '/init.js');
-        response = await obj.paymentGateway.createCustomer(data);
+        let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
+        response = await paymentGateway.createCustomer(data);
         return response;
   }
 
@@ -59,7 +60,8 @@ class Service {
         this.validateSchema(data, schemaName);
         let response;
         const obj = require('../../plugin/' +data.gateway+ '/init.js');
-        response = await obj.paymentGateway.updateCustomer(data);
+        let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
+        response = await paymentGateway.updateCustomer(data);
         return response;
     }
 
@@ -70,7 +72,8 @@ class Service {
         this.validateSchema(params.query, schemaName);
         let response;
         const obj = require('../../plugin/' +params.query.gateway+ '/init.js');
-        response = await obj.paymentGateway.deleteCustomer(params.query);
+        let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
+        response = await paymentGateway.deleteCustomer(params.query);
         return response;
   }
 

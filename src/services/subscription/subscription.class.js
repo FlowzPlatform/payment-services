@@ -29,7 +29,8 @@ class Service {
         this.validateSchema(params.query, schemaName);
         let response;
         const obj = require('../../plugin/' +params.query.gateway+ '/init.js');
-        response = await obj.paymentGateway.getSubscription(params.query);
+        let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
+        response = await paymentGateway.getSubscription(params.query);
         return response;
   }
 
@@ -45,7 +46,8 @@ class Service {
         this.validateSchema(data, schemaName);
         let response;
         const obj = require('../../plugin/' +data.gateway+ '/init.js');
-        response = await obj.paymentGateway.createSubscription(data);
+        let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
+        response = await paymentGateway.createSubscription(data);
         return response;
   }
 
@@ -69,7 +71,8 @@ class Service {
         this.validateSchema(params.query, schemaName);
         let response;
         const obj = require('../../plugin/' +params.query.gateway+ '/init.js');
-        response = await obj.paymentGateway.deleteSubscription(params.query);
+        let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
+        response = await paymentGateway.deleteSubscription(params.query);
         return response;
   }
 

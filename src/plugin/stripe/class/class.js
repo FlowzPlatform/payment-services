@@ -59,11 +59,17 @@ class Stripe {
                         starting_after: data.starting_after
                     },
                     function(err, charges) {
+
                        if(err){
                         resolve(err);
                        }else{
                         resolve(charges);
                        }
+
+                        // asynchronously called
+                        
+                            //return charges;
+
                     }
                 );
             } else if (_.has(data, 'gateway') && _.has(data, 'chargeId')) {
@@ -71,11 +77,15 @@ class Stripe {
                 this.stripe.charges.retrieve(
                     data.chargeId,
                     function(err, charge) {
-                        if(err){
-                            resolve(err);
-                        }else{
-                            resolve(charge);
+
+                        
+                        if (err) {
+                          resolve(err)
+                        } else {
+                          resolve(charge)
                         }
+                            //return charge;
+
                     }
                 );
 
@@ -342,11 +352,19 @@ class Stripe {
                 currency: data.currency,
                 id: data.id
             }, function(err, plan) {
+
+                // asynchronously called
+                console.log("created plan ---- errrrr", err
+              );
+
+
                 if (err) {
-                            resolve(err);
-                        } else {
-                            resolve(plan);
-                        }
+                  resolve (err)
+                }else {
+                  resolve (plan)
+                }
+
+
             })
         })
 
@@ -378,11 +396,14 @@ class Stripe {
                 this.stripe.plans.retrieve(
                     data.id,
                     function(err, plan) {
+
                        if (err) {
                         resolve(err);
                         } else {
                             resolve(plan);
                         }
+
+                        
                     });
             }
         })
