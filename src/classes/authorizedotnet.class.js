@@ -509,6 +509,245 @@ class AuthorizeDotNet {
         })
 
     }
+
+
+    getSubscription(data){
+      return new Promise((resolve, reject) => {
+
+        if(!_.has(data, 'getStatus') && _.has(data, 'id'))
+        {
+
+          console.log("get subscription");
+
+          var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
+
+          var getRequest = new ApiContracts.ARBGetSubscriptionRequest();
+          getRequest.setMerchantAuthentication(this.merchantAuth);
+          getRequest.setSubscriptionId(data.id);
+
+          console.log(JSON.stringify(getRequest.getJSON(), null, 2));
+
+          var ctrl = new ApiControllers.ARBGetSubscriptionController(getRequest.getJSON());
+
+          ctrl.execute(function(){
+            var apiResponse = ctrl.getResponse();
+
+            var response = new ApiContracts.ARBGetSubscriptionResponse(apiResponse);
+
+            console.log(JSON.stringify(response, null, 2));
+
+            if(response != null){
+              if(response.getMessages().getResultCode() == ApiContracts.MessageTypeEnum.OK){
+                console.log('Subscription Name : ' + response.getSubscription().getName());
+                console.log('Message Code : ' + response.getMessages().getMessage()[0].getCode());
+                console.log('Message Text : ' + response.getMessages().getMessage()[0].getText());
+              }
+              else{
+                console.log('Result Code: ' + response.getMessages().getResultCode());
+                console.log('Error Code: ' + response.getMessages().getMessage()[0].getCode());
+                console.log('Error message: ' + response.getMessages().getMessage()[0].getText());
+              }
+            }
+            else{
+              console.log('Null Response.');
+            }
+
+
+            resolve(response);
+
+          });
+        }
+
+        else if(_.has(data, 'getStatus') && _.has(data, 'id'))
+
+        {
+
+          console.log("get subscription status");
+
+          var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
+          var getRequest = new ApiContracts.ARBGetSubscriptionStatusRequest();
+          getRequest.setMerchantAuthentication(this.merchantAuth);
+          getRequest.setSubscriptionId(data.id);
+
+          console.log(JSON.stringify(getRequest.getJSON(), null, 2));
+
+          var ctrl = new ApiControllers.ARBGetSubscriptionStatusController(getRequest.getJSON());
+
+          ctrl.execute(function(){
+            var apiResponse = ctrl.getResponse();
+
+            var response = new ApiContracts.ARBGetSubscriptionStatusResponse(apiResponse);
+
+            console.log(JSON.stringify(response, null, 2));
+
+            if(response != null){
+              if(response.getMessages().getResultCode() == ApiContracts.MessageTypeEnum.OK){
+                console.log('Status : ' + response.getStatus());
+                console.log('Message Code : ' + response.getMessages().getMessage()[0].getCode());
+                console.log('Message Text : ' + response.getMessages().getMessage()[0].getText());
+              }
+              else{
+                console.log('Result Code: ' + response.getMessages().getResultCode());
+                console.log('Error Code: ' + response.getMessages().getMessage()[0].getCode());
+                console.log('Error message: ' + response.getMessages().getMessage()[0].getText());
+              }
+            }
+            else{
+              console.log('Null Response.');
+            }
+
+            resolve(response);
+          });
+        } else
+
+        {
+
+            console.log("inside else condition");
+            var setSearchTypeValue = data.searchType;
+            console.log("setSearchTypeValue",setSearchTypeValue);
+
+            var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
+
+
+            var listRequest = new ApiContracts.ARBGetSubscriptionListRequest();
+            listRequest.setMerchantAuthentication(this.merchantAuth);
+            listRequest.setSearchType(eval("ApiContracts.ARBGetSubscriptionListSearchTypeEnum."+setSearchTypeValue));
+
+            console.log(JSON.stringify(listRequest.getJSON(), null, 2));
+
+            var ctrl = new ApiControllers.ARBGetSubscriptionListController(listRequest.getJSON());
+
+            ctrl.execute(function(){
+              var apiResponse = ctrl.getResponse();
+
+              var response = new ApiContracts.ARBGetSubscriptionListResponse(apiResponse);
+
+              console.log(JSON.stringify(response, null, 2));
+
+              if(response != null){
+                if(response.getMessages().getResultCode() == ApiContracts.MessageTypeEnum.OK){
+                  console.log('Total Results : ' + response.getTotalNumInResultSet());
+                  console.log('List of Subscription Ids : ');
+                  var subscriptions = response.getSubscriptionDetails().getSubscriptionDetail();
+                  for (var i=0;i<subscriptions.length;i++)
+                  {
+                    console.log(subscriptions[i].getId());
+                  }
+                  console.log('Message Code : ' + response.getMessages().getMessage()[0].getCode());
+                  console.log('Message Text : ' + response.getMessages().getMessage()[0].getText());
+                }
+                else{
+                  console.log('Result Code: ' + response.getMessages().getResultCode());
+                  console.log('Error Code: ' + response.getMessages().getMessage()[0].getCode());
+                  console.log('Error message: ' + response.getMessages().getMessage()[0].getText());
+                }
+              }
+              else{
+                console.log('Null Response.');
+              }
+                resolve(response);
+            });
+
+        }
+      })
+    }
+
+
+    updateSubscription (data) {
+      console.log("update authorizenet class");
+
+      return new Promise((resolve, reject) => {
+
+        var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
+
+        var orderType = new ApiContracts.OrderType();
+        orderType.setInvoiceNumber(data.subscription.order.invoiceNumber);
+        orderType.setDescription(data.subscription.order.description);
+
+        var arbSubscriptionType = new ApiContracts.ARBSubscriptionType();
+        arbSubscriptionType.setOrder(orderType);
+
+        var updateRequest = new ApiContracts.ARBUpdateSubscriptionRequest();
+        updateRequest.setMerchantAuthentication(this.merchantAuth);
+        updateRequest.setSubscriptionId(data.id);
+        updateRequest.setSubscription(arbSubscriptionType);
+
+        console.log(JSON.stringify(updateRequest.getJSON(), null, 2));
+
+        var ctrl = new ApiControllers.ARBUpdateSubscriptionController(updateRequest.getJSON());
+
+        ctrl.execute(function(){
+
+          var apiResponse = ctrl.getResponse();
+
+          var response = new ApiContracts.ARBUpdateSubscriptionResponse(apiResponse);
+
+          console.log(JSON.stringify(response, null, 2));
+
+          if(response != null){
+            if(response.getMessages().getResultCode() == ApiContracts.MessageTypeEnum.OK){
+              console.log('Message Code : ' + response.getMessages().getMessage()[0].getCode());
+              console.log('Message Text : ' + response.getMessages().getMessage()[0].getText());
+            }
+            else{
+              console.log('Result Code: ' + response.getMessages().getResultCode());
+              console.log('Error Code: ' + response.getMessages().getMessage()[0].getCode());
+              console.log('Error message: ' + response.getMessages().getMessage()[0].getText());
+            }
+          }
+          else{
+            console.log('Null Response.');
+          }
+
+          resolve(response);
+        });
+
+       });
+
+    }
+
+    deleteSubscription(data) {
+
+       return new Promise((resolve, reject) => {
+
+        var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
+        var cancelRequest = new ApiContracts.ARBCancelSubscriptionRequest();
+        cancelRequest.setMerchantAuthentication(this.merchantAuth);
+        cancelRequest.setSubscriptionId(data.id);
+
+        console.log(JSON.stringify(cancelRequest.getJSON(), null, 2));
+
+        var ctrl = new ApiControllers.ARBCancelSubscriptionController(cancelRequest.getJSON());
+
+        ctrl.execute(function(){
+
+          var apiResponse = ctrl.getResponse();
+
+          var response = new ApiContracts.ARBCancelSubscriptionResponse(apiResponse);
+
+          console.log(JSON.stringify(response, null, 2));
+
+          if(response != null){
+            if(response.getMessages().getResultCode() == ApiContracts.MessageTypeEnum.OK){
+              console.log('Message Code : ' + response.getMessages().getMessage()[0].getCode());
+              console.log('Message Text : ' + response.getMessages().getMessage()[0].getText());
+            }
+            else{
+              console.log('Result Code: ' + response.getMessages().getResultCode());
+              console.log('Error Code: ' + response.getMessages().getMessage()[0].getCode());
+              console.log('Error message: ' + response.getMessages().getMessage()[0].getText());
+            }
+          }
+          else{
+            console.log('Null Response.');
+          }
+
+          resolve(response);
+        });
+
+       });
+    }
+
 }
 
 

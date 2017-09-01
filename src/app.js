@@ -23,7 +23,6 @@ app.use(function(req, res, next) {
     //console.log("==" + req.headers['x-api-token'] + "--");
     // this.XApiToken = req.headers['x-api-token'];
     // this.XApiLogin = req.headers['x-api-login'];
-    console.log("harbar aata hain >? ");
     this.apiHeaders = req.headers ;
     //module.exports.apiHeaders = this.apiHeaders;
     //req.feathers = req.headers['x-api-token'];
