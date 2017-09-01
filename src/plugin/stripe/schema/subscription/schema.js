@@ -16,9 +16,6 @@ module.exports = {
       "additionalProperties": false
   },
 
-
-
-
   get : {
       "properties": {
         "gateway": {
