@@ -274,6 +274,7 @@ class Stripe {
             }, function(err, token) {
                 if (err) {
                     console.log("error ", err);
+                    resolve(err);
                 } else {
                     stripeInstance.stripe.customers.create({
                         description: 'Customer for liam.moore@example.com',
@@ -438,6 +439,81 @@ class Stripe {
                 });
         })
     }
+
+    
+    createRefund(data) {
+        console.log("inside createRefund", data);
+        return new Promise((resolve, reject) => {
+            this.stripe.refunds.create({
+                charge: data.chargeId,
+                amount: data.amount,
+                reason: data.reason
+            }, function(err, refund) {
+                if(err){
+                    console.log("error",err);
+                    resolve(err);
+                }else{
+                    console.log("refund",refund);
+                    resolve(refund);
+                }
+            });
+        })
+    }
+
+     getRefund(data) {
+        console.log("inside getRefund...")
+        return new Promise((resolve, reject) => {
+
+            if (!_.has(data, 'id') && _.has(data, 'gateway')) {
+                console.log("check data",data);
+                this.stripe.refunds.list({
+                        limit: data.limit,
+                        starting_after: data.starting_after,
+                        charge:data.chargeId
+                    },
+                    function(err, refunds) {
+                       if(err){
+                        resolve(err);
+                       }else{
+                        resolve(refunds);
+                       }
+                    }
+                );
+            } else if (_.has(data, 'gateway') && _.has(data, 'id')) {
+                console.log("11",data);
+                this.stripe.refunds.retrieve(
+                    data.id,
+                    function(err, refund) {
+                        if(err){
+                            resolve(err);
+                        }else{
+                            resolve(refund);
+                        }
+                    });
+                }
+        })
+    }
+
+    updateRefund(data) {
+
+        var refundId = data.id;
+        delete data.gateway;
+        delete data.id;
+        console.log("data",data);
+        console.log("inside update refund..");
+        return new Promise((resolve,reject) => {
+            this.stripe.refunds.update(
+                refundId,data,
+                function(err, refund) {
+                    if(err){
+                            resolve(err);
+                        }else{
+                            resolve(refund);
+                        }
+                });
+        })
+    }
+
 
 }
 
