@@ -19,7 +19,7 @@ class AuthorizeDotNet {
 
     createCharge(data) {
         let response;
-        if (data.is_customer) {
+        if (data.isCustomer) {
             response = this.chargeCustomer(data);
         } else {
             response = this.chargeDirect(data);
@@ -29,7 +29,7 @@ class AuthorizeDotNet {
     }
 
     chargeCustomer(data) {
-        console.log("inside docharge..");
+        console.log("inside chargeCustomer..");
         console.log(data);
 
         var profileToCharge = new ApiContracts.CustomerProfilePaymentType();
@@ -278,7 +278,8 @@ class AuthorizeDotNet {
     getCustomer(data) {
 
         return new Promise((resolve, reject) => {
-            if (_.has(data, 'gateway') && _.has(data, 'id')) {
+            if (_.has(data, 'gateway') && !_.has(data, 'id')) {
+
                 var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
 
 
@@ -320,7 +321,7 @@ class AuthorizeDotNet {
 
                 });
 
-            } else if (_.has(data, 'gateway') && !_.has(data, 'id')) {
+            } else if (_.has(data, 'gateway') && _.has(data, 'id')) {
                 var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
 
                 var getRequest = new ApiContracts.GetCustomerProfileRequest();
@@ -739,6 +740,160 @@ class AuthorizeDotNet {
 
         });
     }
+
+
+
+    /////////////   REFUND  ///////////////
+
+     createRefund(data) {
+
+        return new Promise((resolve, reject) => {
+
+            var setTransactionTypeValue = data.transactionRequest.transactionType;
+
+            var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
+            
+            var creditCard = new ApiContracts.CreditCardType();
+            console.log("data....................",data);
+            creditCard.setCardNumber(data.transactionRequest.payment.creditCard.cardNumber);
+            creditCard.setExpirationDate(data.transactionRequest.payment.creditCard.expirationDate);
+
+            var paymentType = new ApiContracts.PaymentType();
+            paymentType.setCreditCard(creditCard);
+
+            var transactionRequestType = new ApiContracts.TransactionRequestType();
+            transactionRequestType.setTransactionType(eval("ApiContracts.TransactionTypeEnum."+setTransactionTypeValue));
+            transactionRequestType.setPayment(paymentType);
+           // console.log("data.transactionRequest.amount",data.transactionRequest.amount);
+            transactionRequestType.setAmount(data.transactionRequest.amount);
+            transactionRequestType.setRefTransId(data.transactionRequest.refTransId);
+
+            console.log("transactionRequestType /////////////// ", transactionRequestType)
+
+            var createRequest = new ApiContracts.CreateTransactionRequest();
+            createRequest.setMerchantAuthentication(this.merchantAuth);
+            createRequest.setTransactionRequest(transactionRequestType);
+
+            //pretty print request
+            console.log(JSON.stringify(createRequest.getJSON(), null, 2));
+                
+            var ctrl = new ApiControllers.CreateTransactionController(createRequest.getJSON());
+
+            ctrl.execute(function(){
+
+                var apiResponse = ctrl.getResponse();
+
+                var response = new ApiContracts.CreateTransactionResponse(apiResponse);
+
+                //pretty print response
+                console.log(JSON.stringify(response, null, 2));
+
+                if(response != null){
+                    if(response.getMessages().getResultCode() == ApiContracts.MessageTypeEnum.OK){
+                        if(response.getTransactionResponse().getMessages() != null){
+                            console.log('Successfully created transaction with Transaction ID: ' + response.getTransactionResponse().getTransId());
+                            console.log('Response Code: ' + response.getTransactionResponse().getResponseCode());
+                            console.log('Message Code: ' + response.getTransactionResponse().getMessages().getMessage()[0].getCode());
+                            console.log('Description: ' + response.getTransactionResponse().getMessages().getMessage()[0].getDescription());
+                        }
+                        else {
+                            console.log('Failed Transaction.');
+                            if(response.getTransactionResponse().getErrors() != null){
+                                console.log('Error Code: ' + response.getTransactionResponse().getErrors().getError()[0].getErrorCode());
+                                console.log('Error message: ' + response.getTransactionResponse().getErrors().getError()[0].getErrorText());
+                            }
+                        }
+                    }
+                    else {
+                        console.log('Failed Transaction. ');
+                        if(response.getTransactionResponse() != null && response.getTransactionResponse().getErrors() != null){
+                        
+                            console.log('Error Code: ' + response.getTransactionResponse().getErrors().getError()[0].getErrorCode());
+                            console.log('Error message: ' + response.getTransactionResponse().getErrors().getError()[0].getErrorText());
+                        }
+                        else {
+                            console.log('Error Code: ' + response.getMessages().getMessage()[0].getCode());
+                            console.log('Error message: ' + response.getMessages().getMessage()[0].getText());
+                        }
+                    }
+                }
+                else {
+                    console.log('Null Response.');
+                }
+
+                resolve(response);
+            });
+        })
+    }
+
+    // updateRefund(data) {
+
+    //     return new Promise((resolve, reject) => {
+
+    //         var setTransactionTypeValue = data.transactionRequest.transactionType;
+
+    //         var merchantAuthenticationType = new ApiContracts.MerchantAuthenticationType();
+            
+    //         var transactionRequestType = new ApiContracts.TransactionRequestType();
+    //         transactionRequestType.setRefTransId(data.transactionRequest.refTransId);
+
+    //         console.log("transactionRequestType /////////////// ", transactionRequestType)
+
+    //         var createRequest = new ApiContracts.UpdateTransactionRequest();
+    //         createRequest.setMerchantAuthentication(this.merchantAuth);
+    //         createRequest.setTransactionRequest(transactionRequestType);
+
+    //         //pretty print request
+    //         console.log(JSON.stringify(createRequest.getJSON(), null, 2));
+                
+    //         var ctrl = new ApiControllers.UpdateTransactionController(createRequest.getJSON());
+
+    //         ctrl.execute(function(){
+
+    //             var apiResponse = ctrl.getResponse();
+
+    //             var response = new ApiContracts.UpdateTransactionResponse(apiResponse);
+
+    //             //pretty print response
+    //             console.log(JSON.stringify(response, null, 2));
+
+    //             if(response != null){
+    //                 if(response.getMessages().getResultCode() == ApiContracts.MessageTypeEnum.OK){
+    //                     if(response.getTransactionResponse().getMessages() != null){
+    //                         console.log('Successfully created transaction with Transaction ID: ' + response.getTransactionResponse().getTransId());
+    //                         console.log('Response Code: ' + response.getTransactionResponse().getResponseCode());
+    //                         console.log('Message Code: ' + response.getTransactionResponse().getMessages().getMessage()[0].getCode());
+    //                         console.log('Description: ' + response.getTransactionResponse().getMessages().getMessage()[0].getDescription());
+    //                     }
+    //                     else {
+    //                         console.log('Failed Transaction.');
+    //                         if(response.getTransactionResponse().getErrors() != null){
+    //                             console.log('Error Code: ' + response.getTransactionResponse().getErrors().getError()[0].getErrorCode());
+    //                             console.log('Error message: ' + response.getTransactionResponse().getErrors().getError()[0].getErrorText());
+    //                         }
+    //                     }
+    //                 }
+    //                 else {
+    //                     console.log('Failed Transaction. ');
+    //                     if(response.getTransactionResponse() != null && response.getTransactionResponse().getErrors() != null){
+                        
+    //                         console.log('Error Code: ' + response.getTransactionResponse().getErrors().getError()[0].getErrorCode());
+    //                         console.log('Error message: ' + response.getTransactionResponse().getErrors().getError()[0].getErrorText());
+    //                     }
+    //                     else {
+    //                         console.log('Error Code: ' + response.getMessages().getMessage()[0].getCode());
+    //                         console.log('Error message: ' + response.getMessages().getMessage()[0].getText());
+    //                     }
+    //                 }
+    //             }
+    //             else {
+    //                 console.log('Null Response.');
+    //             }
+
+    //             resolve(response);
+    //         });
+    //     })
+    // }
 }
 
 

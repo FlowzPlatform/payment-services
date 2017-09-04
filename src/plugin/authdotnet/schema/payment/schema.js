@@ -20,7 +20,7 @@ module.exports = {
                 "type": "boolean",
             }
         },
-        "required": ["gateway", "amount"],
+        "required": ["gateway", "amount","isCustomer"],
         "oneOf": [{
                 "type": "object",
                 "properties": {
