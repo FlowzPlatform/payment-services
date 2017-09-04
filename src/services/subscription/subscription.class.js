@@ -53,12 +53,14 @@ class Service {
   }
 
   async patch (id, data, params) {
-        let schema1 = require("../../plugin/"+data.gateway+"/schema/subscription/schema.js")
+        console.log("inside patch", data);
+        const schema1 = require("../../plugin/"+data.gateway+"/schema/subscription/schema.js")
         let schemaName = schema1.update ;
         this.validateSchema(data, schemaName);
         let response;
         const obj = require('../../plugin/' +data.gateway+ '/init.js');
-        response = await obj.paymentGateway.updateSubscription(data);
+        let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
+        response = await paymentGateway.updateSubscription(data);
         return response;
   }
 

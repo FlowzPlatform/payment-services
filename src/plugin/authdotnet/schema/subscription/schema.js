@@ -5,12 +5,6 @@ module.exports = {
            "type": "string",
            "enum": ["stripe", "authdotnet"]
        },
-         "customer": {
-            "description": "valid customer id"
-         },
-         "plan": {
-             "description": "valid plan id"
-         },
          "subscription":{
               "description":"Contains information about the subscription",
               "properties":{
@@ -53,9 +47,6 @@ module.exports = {
                 },
                 "amount":{
                   "description":"amount to be billed"
-                },
-                "currencycode":{
-                  "description":"currency supported"
                 },
                 "trialAmount":{
                   "description":"amount to be charged for each payment during the trial period"
