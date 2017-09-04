@@ -44,7 +44,7 @@ class Service {
         let response;
         const obj = require('../../plugin/' +data.gateway+ '/init.js');
         let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
-        response = await paymentGateway.doCharge(data);
+        response = await paymentGateway.createCharge(data);
         return response;
     }
 

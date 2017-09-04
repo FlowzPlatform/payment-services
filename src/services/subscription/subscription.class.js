@@ -7,10 +7,7 @@ let errors = feathersErrors.errors;
 //let stripeConfig = require("../../config/stripe/stripeConfig");
 const appHooks = require('../../app.hooks');
 
-const authdotnet = require('../../classes/authorizedotnet.class.js');
-const stripeClass = require('../../classes/stripe.class.js');
 
-let availableGateways = ["paypal", "stripe", "authorizeDotNet"];
 
 let ajv = new Ajv({
     allErrors: true

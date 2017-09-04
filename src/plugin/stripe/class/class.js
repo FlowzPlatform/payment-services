@@ -24,7 +24,7 @@ class Stripe {
      * do direct charge
      * @param {*} data
      */
-    doCharge(data) {
+    createCharge(data) {
         console.log("inside stripe docharge..");
         //console.log(this.stripe);
 
@@ -67,7 +67,7 @@ class Stripe {
                        }
 
                         // asynchronously called
-                        
+
                             //return charges;
 
                     }
@@ -78,7 +78,7 @@ class Stripe {
                     data.chargeId,
                     function(err, charge) {
 
-                        
+
                         if (err) {
                           resolve(err)
                         } else {
@@ -196,7 +196,7 @@ class Stripe {
         delete data.gateway;
         return new Promise((resolve, reject) => {
 
-    
+
             this.stripe.subscriptions.update(
                 subscriptionId,
                 data
@@ -403,7 +403,7 @@ class Stripe {
                             resolve(plan);
                         }
 
-                        
+
                     });
             }
         })

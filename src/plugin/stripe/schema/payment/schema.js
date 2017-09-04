@@ -57,8 +57,6 @@ module.exports = {
         "required": ["gateway"],
         "additionalProperties": false
     },
-
-
     update: {
         "properties": {
             "gateway": {
