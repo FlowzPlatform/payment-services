@@ -12,7 +12,7 @@ let ajv = new Ajv({
 class Service {
     constructor(options) {
         console.log("inside cons..");
-        console.log(options)
+        // console.log(options)
             //const Ajv = require('ajv');
         this.options = options || {};
     }

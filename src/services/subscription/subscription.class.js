@@ -21,8 +21,10 @@ class Service {
   }
 
   async find (params) {
+    console.log("parameter---------",params.query)
         const schema1 = require("../../plugin/"+params.query.gateway+"/schema/subscription/schema.js")
         let schemaName = schema1.get ;
+        console.log("schemaName---------",schema1)
         this.validateSchema(params.query, schemaName);
         let response;
         const obj = require('../../plugin/' +params.query.gateway+ '/init.js');
@@ -55,13 +57,16 @@ class Service {
   async patch (id, data, params) {
         console.log("inside patch", data);
         const schema1 = require("../../plugin/"+data.gateway+"/schema/subscription/schema.js")
+        console.log("schma1",schema1)       
         let schemaName = schema1.update ;
         this.validateSchema(data, schemaName);
         let response;
         const obj = require('../../plugin/' +data.gateway+ '/init.js');
+        // console.log(appHooks.apiHeaders)
         let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
         response = await paymentGateway.updateSubscription(data);
         return response;
+        // console.log(response)
   }
 
   async remove (id, params) {
