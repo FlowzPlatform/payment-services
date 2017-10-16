@@ -22,12 +22,12 @@
 ## stripe
 
 
-http://localhost:3030/payment
+   http://localhost:3030/payment
  
 
 1. create payment
 
-> json body
+#json body
 
 ```sh
 {
@@ -41,7 +41,7 @@ http://localhost:3030/payment
 
 2. update payment
 
->  json body
+#json body
 
 ```sh
 {
@@ -61,9 +61,9 @@ http://localhost:3030/payment
 
 3. get
 
-http://localhost:3030/payment?gateway=stripe&customerId=cus_B8WriFH4b9Mt9J
+   http://localhost:3030/payment?gateway=stripe&customerId=cus_B8WriFH4b9Mt9J
 
-http://localhost:3030/payment?gateway=stripe&chargeId=ch_1ArRYUGMQxjcIs4EVgV7bG4c&customerId=cus_B8WriFH4b9Mt9J
+   http://localhost:3030/payment?gateway=stripe&chargeId=ch_1ArRYUGMQxjcIs4EVgV7bG4c&customerId=cus_B8WriFH4b9Mt9J
 
 
 
