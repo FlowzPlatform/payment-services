@@ -10,6 +10,7 @@
 2. cd OB_payment_and_invoice
 
     > npm install
+    
     > npm start
 
 
@@ -20,7 +21,9 @@
 
 ## stripe
 
- http://localhost:3030/payment
+
+http://localhost:3030/payment
+ 
 
 1. create payment
 
@@ -55,6 +58,7 @@
 }
 }
 ```
+
 3. get
 
 http://localhost:3030/payment?gateway=stripe&customerId=cus_B8WriFH4b9Mt9J
