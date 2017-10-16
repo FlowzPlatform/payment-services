@@ -1,57 +1,65 @@
-# obpayment_backend
+# OB_PAYMENT
 
 > payment and invoice module
 
-## About
 
-This project uses [Feathers](http://feathersjs.com). An open source web framework for building modern real-time applications.
+## Getting started
 
-## Getting Started
+1. Take clone of project
 
-Getting up and running is as easy as 1, 2, 3.
+2. cd OB_payment_and_invoice
 
-1. Make sure you have [NodeJS](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.
-2. Install your dependencies
+    > npm install
+    > npm start
 
-    ```
-    cd path/to/obpayment_backend; npm install
-    ```
 
-3. Start your app
+# OB_PAYMENT_MODULE
 
-    ```
-    npm start
-    ```
+> There are three types of payment gateway.1) stripe 2) authorize.net 3) paypal.you can use anyone for your payment.
 
-## Testing
 
-Simply run `npm test` and all your tests in the `test/` directory will be run.
+## stripe
 
-## Scaffolding
+ http://localhost:3030/payment
 
-Feathers has a powerful command line interface. Here are a few things it can do:
+1. create payment
 
-```
-$ npm install -g feathers-cli             # Install Feathers CLI
+> json body
 
-$ feathers generate service               # Generate a new Service
-$ feathers generate hook                  # Generate a new Hook
-$ feathers generate model                 # Generate a new Model
-$ feathers help                           # Show all commands
+```sh
+{
+"gateway":"stripe",
+"customerId":"cus_B8WriFH4b9Mt9J",
+"amount":20,
+"currency":"usd",
+"description" : "this is new post"
+}
 ```
 
-## Help
+2. update payment
 
-For more information on all the things you can do with Feathers visit [docs.feathersjs.com](http://docs.feathersjs.com).
+>  json body
 
-## Changelog
+```sh
+{
+"gateway":"stripe",
+"chargeId":"ch_1ArRYUGMQxjcIs4EVgV7bG4c",
+"description" : "this is new patch",
+"shipping":{
+"address":{
+"line1":"",
+"city":"",
+"country":"IN"
+},
+"name":"your name"
+}
+}
+```
+3. get
 
-__0.1.0__
+http://localhost:3030/payment?gateway=stripe&customerId=cus_B8WriFH4b9Mt9J
 
-- Initial release
+http://localhost:3030/payment?gateway=stripe&chargeId=ch_1ArRYUGMQxjcIs4EVgV7bG4c&customerId=cus_B8WriFH4b9Mt9J
 
-## License
 
-Copyright (c) 2016
 
-Licensed under the [MIT license](LICENSE).
