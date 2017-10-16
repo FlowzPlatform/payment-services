@@ -23,9 +23,9 @@
 http://localhost:3030/payment
  
 
-> ### create payment
+>### create payment
 
-#####json body
+##### json body
 
 ```sh
 {
@@ -97,7 +97,7 @@ http://localhost:3030/payment?gateway=stripe&chargeId=ch_1ArRYUGMQxjcIs4EVgV7bG4
 
 ## Paypal
 
->###create payment
+>### create payment
 
 
 ##### json body
@@ -146,15 +146,15 @@ http://localhost:3030/payment?gateway=stripe&chargeId=ch_1ArRYUGMQxjcIs4EVgV7bG4
 
 >###get payment
 
- get all payment data
+ #####  get all payment data
  
  localhost:3030/payment?gateway=paypal
  
- get a payment data with limitation by count
+ ##### get a payment data with limitation by count
  
  localhost:3030/payment?gateway=paypal&count=25
  
- Get perticular payment data by payment id
+ ##### Get perticular payment data by payment id
  
  localhost:3030/payment?gateway=paypal&payment_id=PAY-7CY149809C8463721LGXYSQY
 
