@@ -97,7 +97,7 @@ json body:
 		"gateway":"stripe",
 		"chargeId":"charge id(ex. ch_1AyzaRGMQxjcIs4EK8fuMJ2l)",
 		"amount":"provide amount (ex.100)"
-	}                                                                 ```
+	}                                                                
 	```
 
 	* Create a partialy  refund for particular charge by giving chargeId and some amount
@@ -283,9 +283,9 @@ user can use paypal payment service by passing client id and client secret in au
       		"payment_card": {
         		"type": "ex.visa",
          		"number": "your card number(ex.4242424242424242)",
-          		"expire_month":expiration month,
-        		"expire_year": expiration year,
-       			"cvv2": cvv number,
+          		"expire_month":"expiration month(ex.11)",
+        		"expire_year": "expiration year(ex.2018)",
+       			"cvv2": "cvv number(ex.111)",
         		"first_name": "first name",
         		"last_name": "last name",
         		"billing_country": "country code",
