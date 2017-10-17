@@ -47,7 +47,7 @@ json body:
 {
 	"gateway":"stripe",
 	"customerId":"customer id",
-	"amount":provide amount,
+	"amount":"provide amount",
 	"currency":"currency code",
 	"description":"description of post"
 }
@@ -96,7 +96,7 @@ json body:
 	{
 		"gateway":"stripe",
 		"chargeId":"charge id(ex. ch_1AyzaRGMQxjcIs4EK8fuMJ2l)",
-		"amount":provide amount (ex.100)
+		"amount":"provide amount (ex.100)"
 	}                                                                 ```
 	```
 
@@ -105,8 +105,8 @@ json body:
 	```json
 	{
 		"gateway":"stripe",
-		"chargeId":" charge id(ex.ch_1AyzaRGMQxjcIs4EK8fuMJ2l)",
-		"amount":partial amount(ex.100)
+		"chargeId":"charge id(ex.ch_1AyzaRGMQxjcIs4EK8fuMJ2l)",
+		"amount":"partial amount(ex.100)"
 	}
 	```  
 
@@ -166,7 +166,7 @@ json body:
 ```json
 {
 	"gateway":"authdotnet",
-	"amount":provide amount,
+	"amount":"provide amount",
 	"customerId":"your customer id",
 	"customerPaymentProfieId":"your customerPaymentProfieId",
     "isCustomer":true
@@ -179,7 +179,7 @@ json body:
 ```json
  {
 	"gateway":"authdotnet",
-	"amount": your amount,
+	"amount": "provide amount",
  	"cardNumber":"your card number",
  	"expMonth":"expiration month",
  	"expYear":"expiration year",
@@ -242,7 +242,7 @@ json body:
         "payment": {
 			"creditCard": {
             	"cardNumber": "credit card number",
-                "expirationDate": "XXXX"
+                "expirationDate": "XXXX(ex."
 			}
 		}
 	}
