@@ -9,31 +9,45 @@
 
 2. cd OB_payment_and_invoice
 
-    > npm install
-    
-    > npm start
+> npm install
+
+> npm start
 
 # OB_PAYMENT_MODULE
 
-> There are three types of payment gateway.1) stripe 2) authorize.net 3) paypal.you can use anyone for your payment.
+> we are providing three payment gateway services(stripe, authorize.net, paypal) for  payment.user can use any of them for payment.
 
 
 ## Stripe
 
-http://localhost:3030/payment
+###http://localhost:3030/payment
+
+
+### About
+
+user can use stripe payment service by passing client id and client secret in authorization header.
+
+####generate client id and client secret
+
+https://dashboard.stripe.com/login?redirect=%2F
+
+####pass client id secret in authorization header
+
+x-api-token:"your secret key"
+
  
 
 >### create payment
 
 ##### json body
 
-```sh
+```
 {
 "gateway":"stripe",
-"customerId":"cus_B8WriFH4b9Mt9J",
-"amount":20,
-"currency":"usd",
-"description" : "this is new post"
+"customerId":"customer id",
+"amount":provide amount,
+"currency":"currency code",
+"description" : "description of post"
 }
 ```
 
@@ -41,16 +55,16 @@ http://localhost:3030/payment
 
 ##### json body
 
-```sh
+```
 {
 "gateway":"stripe",
-"chargeId":"ch_1ArRYUGMQxjcIs4EVgV7bG4c",
-"description" : "this is new patch",
+"chargeId":"charge id",
+"description" : "update description",
 "shipping":{
 "address":{
-"line1":"",
-"city":"",
-"country":"IN"
+"line1":"address",
+"city":"provide city",
+"country":"country code"
 },
 "name":"your name"
 }
@@ -59,51 +73,199 @@ http://localhost:3030/payment
 
 >### get payment
 
-http://localhost:3030/payment?gateway=stripe&customerId=cus_B8WriFH4b9Mt9J
+###### Get all charge data for customer using customerId. Pass the query params                             
 
-http://localhost:3030/payment?gateway=stripe&chargeId=ch_1ArRYUGMQxjcIs4EVgV7bG4c&customerId=cus_B8WriFH4b9Mt9J
+http://localhost:3030/payment?gateway=stripe&customerId=your customer id
 
+###### Get perticular charge data by chargeid
+
+http://localhost:3030/payment?gateway=stripe&chargeId="charge id"&customerId="customer id"
+
+
+>### refund payment
+
+http://localhost:3030/customer
+
+#### create
+
+###### Create a fully  refund for particular charge by giving chargeId and whole amount                       
+
+```
+{
+"gateway":"stripe",
+"chargeId":"charge id(ex. ch_1AyzaRGMQxjcIs4EK8fuMJ2l)",
+"amount":provide amount (ex.100)
+}                                                                 ```
+
+###### Create a partialy  refund for particular charge by giving chargeId and some amount 
+
+```
+{
+"gateway":"stripe",
+"chargeId":" charge id(ex.ch_1AyzaRGMQxjcIs4EK8fuMJ2l)",
+"amount":partial amount(ex.100)
+}
+```  
+
+#### update
+
+###### Updates the specified refund by setting the values of the parameters passed.
+
+```
+{
+"gateway":"stripe",
+    "id": "refund id(ex.re_1Ax9amGMQxjcIs4EV9babkAu)",
+    "metadata": {
+    "orederid":"(ex.123456)"
+    }
+}
+``` 
+
+#### get
+
+###### Retrieves the details of an existing refund by giving refund Id
+
+http://localhost:3030/refund?gateway=stripe&id="refund id"
+
+###### Returns a list of all refunds you’ve previously created
+
+http://localhost:3030/refund?gateway=stripe 
+
+###### Returns a list of all refunds that previously created giving limit and pagination
+
+http://localhost:3030/refund?gateway=stripe&limit=2&starting_after="refund id"                         
 
 ## Authdotnet
+
+### http://localhost:3030/payment
+
+### About
+
+user can use Authorize.net payment service by passing client id and client secret in authorization header.
+
+####generate client id and client secret
+
+https://developer.authorize.net
+
+####pass client id secret in authorization header
+
+x-api-login:"API LOGIN ID"
+
+x-api-token:"TRANSACTION KEY"
+
 
 
 >### Payment for existing customer
 
 ##### json body
 
-```sh
+```
 {
 "gateway":"authdotnet",
-"amount":20,
-"customerId":"1501802960",
-"customerPaymentProfieId":"1501324492",
+"amount":provide amount,
+"customerId":"your customer id",
+"customerPaymentProfieId":"your customerPaymentProfieId",
     "isCustomer":true
 }
 ```
 
 >### Payment for random customer
 
-   ```sh
+```
  {
 "gateway":"authdotnet",
- "amount": 200,
- "cardNumber":"4242424242424242",
- "expMonth":"05",
- "expYear":"22",
- "cvc":"235",
+ "amount": your amount,
+ "cardNumber":"your card number",
+ "expMonth":"expiration month",
+ "expYear":"expiration year",
+ "cvc":"your cvv number",
  "isCustomer":false
+}
+```
+                       
+
+###### create a fully refund for particular payment by giving sale id and whole amount.
+
+##### json body
+
+```
+{
+"gateway":"paypal",
+"saleid":"your sale id.(ex.14J21811R910183D)",
+"amount": {
+    "total": "total amount",
+    "currency": "currency code.(ex.USD)"
+  }
+}
+```
+
+>### refund payment
+
+#### create
+
+######   Create a fully refund for particular payment by giving transaction id and whole amount
+
+```
+{
+"gateway":"authdotnet",
+"transactionRequest":{
+"transactionType":"REFUNDTRANSACTION",
+"amount":"fully amount",
+"refTransId":"Merchant-assigned reference ID",
+            "payment": {
+                "creditCard": {
+                    "cardNumber": "credit card number",
+                    "expirationDate": "XXXX"
+                }
+            }
+}
+}
+```
+
+######  Create a partially  refund for particular payment by giving transaction id and some amount
+
+```                                                                                                                                   {
+"gateway":"authdotnet",
+"transactionRequest":{
+"transactionType":"REFUNDTRANSACTION",
+"amount":"partial amount",
+"refTransId":"Merchant-assigned reference ID",
+            "payment": {
+                "creditCard": {
+                    "cardNumber": "credit card number",
+                    "expirationDate": "XXXX"
+                }
+            }
+}
 }
 ```
 
 ## Paypal
 
->### create payment
+### http://localhost:3030/payment
 
+### About
+
+user can use paypal payment service by passing client id and client secret in authorization header.
+
+####generate client id and client secret
+
+https://developer.paypal.com/
+
+####pass client id secret in authorization header
+
+x-api-login:"your client id"
+
+x-api-token:"your client secret"
+
+
+
+
+>### create payment
 
 ##### json body
 
-
-```sh
+```
 {
 "gateway":"paypal",
 "intent": "sale",
@@ -111,32 +273,32 @@ http://localhost:3030/payment?gateway=stripe&chargeId=ch_1ArRYUGMQxjcIs4EVgV7bG4
     "payment_method": "credit_card",
     "funding_instruments": [{
       "payment_card": {
-        "type": "visa",
-         "number": "4242424242424242",
-          "expire_month":11,
-        "expire_year": 2018,
-       "cvv2": 123,
-        "first_name": "Joe",
-        "last_name": "Shopper",
-        "billing_country": "US",
+        "type": "ex.visa",
+         "number": "your card number(ex.4242424242424242)",
+          "expire_month":expiration month,
+        "expire_year": expiration year,
+       "cvv2": cvv number,
+        "first_name": "first name",
+        "last_name": "last name",
+        "billing_country": "country code",
         "billing_address": {
-          "line1": "52 N Main ST",
-          "city": "Johnstown",
-          "state": "OH",
-          "postal_code": "43210",
-          "country_code": "US"
+          "line1": "address",
+          "city": "your city",
+          "state": "state code (ex.OH)",
+          "postal_code": "postal code",
+          "country_code": "country code (ex.US)"
         }
       }
     }]
   },
   "transactions": [{
     "amount": {
-      "total": "7.47",
-      "currency": "USD",
+      "total": "transaction amount",
+      "currency": "currency code.ex.USD",
       "details": {
-        "subtotal": "7.41",
-        "tax": "0.03",
-        "shipping": "0.03"
+        "subtotal": "subtotal amount",
+        "tax": "tax charge",
+        "shipping": "shipping charge"
       }
     },
     "description": "This is the payment transaction description"
@@ -144,17 +306,48 @@ http://localhost:3030/payment?gateway=stripe&chargeId=ch_1ArRYUGMQxjcIs4EVgV7bG4
 }
 ```
 
->###get payment
+>### get payment
 
- #####  get all payment data
+###### get all payment data
  
- localhost:3030/payment?gateway=paypal
+ http://localhost:3030/payment?gateway=paypal
  
- ##### get a payment data with limitation by count
+###### getpayment data with limitation by count
  
- localhost:3030/payment?gateway=paypal&count=25
+ http://localhost:3030/payment?gateway=paypal&count=25
  
- ##### Get perticular payment data by payment id
+###### get particular payment data by payment id
  
- localhost:3030/payment?gateway=paypal&payment_id=PAY-7CY149809C8463721LGXYSQY
+ http://localhost:3030/payment?gateway=paypal&payment_id=your payment id
 
+>### refund payment
+
+http://localhost:3030/payment
+
+###### create a fully refund for particular payment by giving sale id and whole amount.
+
+##### json body
+
+```
+{
+"gateway":"paypal",
+"saleid":"your sale id.(ex.14J21811R910183D)",
+"amount": {
+    "total": "total amount",
+    "currency": "currency code.(ex.USD)"
+  }
+}
+```
+
+###### create a partial refund for particular payment by giving sale id and amount.
+
+```
+{
+"gateway":"paypal",
+"saleid":"sale id.(ex.14J21811R910183D",
+"amount": {
+    "total": "partial amount",
+    "currency": "currency code.(ex.USD)"
+  }
+}
+```
