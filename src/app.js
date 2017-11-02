@@ -17,6 +17,20 @@ const appHooks = require('./app.hooks');
 
 const app = feathers();
 
+app.use(function(req, res, next) {
+    //console.log("app.use........" + Object.keys(req));
+    //console.log("res  "+ JSON.stringify(req.res));
+    //console.log("==" + req.headers['x-api-token'] + "--");
+    // this.XApiToken = req.headers['x-api-token'];
+    // this.XApiLogin = req.headers['x-api-login'];
+    this.apiHeaders = req.headers ;
+    //module.exports.apiHeaders = this.apiHeaders;
+    //req.feathers = req.headers['x-api-token'];
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 // Load app configuration
 app.configure(configuration(path.join(__dirname, '..')));
 // Enable CORS, security, compression, favicon and body parsing

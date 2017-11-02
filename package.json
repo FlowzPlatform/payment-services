@@ -27,9 +27,11 @@
     "mocha": "mocha test/ --recursive"
   },
   "dependencies": {
+    "authorizenet": "^1.0.3",
     "body-parser": "^1.17.2",
     "compression": "^1.7.0",
     "cors": "^2.8.3",
+    "decache": "^4.1.0",
     "feathers": "^2.1.4",
     "feathers-configuration": "^0.4.1",
     "feathers-errors": "^2.8.2",
@@ -37,8 +39,11 @@
     "feathers-hooks-common": "^3.5.5",
     "feathers-rest": "^1.8.0",
     "feathers-socketio": "^2.0.0",
+    "feathers-swagger": "^0.5.0",
     "helmet": "^3.6.1",
+    "paypal-rest-sdk": "^1.7.1",
     "serve-favicon": "^2.4.3",
+    "stripe": "^4.24.0",
     "winston": "^2.3.1"
   },
   "devDependencies": {
