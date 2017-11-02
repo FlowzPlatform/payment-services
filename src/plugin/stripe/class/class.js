@@ -25,28 +25,70 @@ class Stripe {
      * @param {*} data
      */
     createCharge(data) {
-        console.log("inside stripe docharge..");
-        //console.log(this.stripe);
+       console.log("inside stripe docharge..");
+       //console.log(this.stripe);
+       let response;
+       if (data.isCustomer) {
+           response = this.chargeCustomer(data);
+       } else  {
+           response = this.chargeDirect(data);
+       }
+       return response;
+   }
 
-        return new Promise((resolve, reject) => {
 
-            this.stripe.charges.create({
-                amount: data.amount,
-                currency: data.currency,
-                description: data.description,
-                customer: data.customerId
-            }, function(err, charge) {
-                // asynchronously called
-                if (err) {
-                    resolve(err)
-                } else {
-                    console.log(charge)
-                        //console.log('1212');
-                    resolve(charge)
-                }
-            });
-        })
-    }
+
+    chargeCustomer(data) {
+
+       console.log("charge customer..");
+       return new Promise((resolve, reject) => {
+
+           this.stripe.charges.create({
+               amount: data.amount,
+               currency: data.currency,
+               description: data.description,
+               customer: data.customerId
+           }, function(err, charge) {
+               // asynchronously called
+               if (err) {
+                   resolve(err)
+               } else {
+                   console.log(charge)
+                       //console.log('1212');
+                   resolve(charge)
+               }
+           });
+       });
+   }
+
+    chargeDirect(data) {
+
+       console.log("charge direct..");
+       return new Promise((resolve, reject) => {
+
+           this.stripe.charges.create({
+               amount: data.amount,
+               currency: data.currency,
+               description: data.description ? data.description : '',
+               source: {
+                   "exp_month": data.expMonth,
+                   "exp_year": data.expYear,
+                   "number": data.cardNumber,
+                   "cvc": data.cvc,
+                   "object": "card"
+               }
+           }, function(err, charge) {
+               // asynchronously called
+               if (err) {
+                   resolve(err)
+               } else {
+                   console.log(charge)
+                       //console.log('1212');
+                   resolve(charge)
+               }
+           });
+       })
+   }
     getCharge(data) {
         console.log("inside getcharges...")
         console.log(1212);
@@ -440,7 +482,7 @@ class Stripe {
         })
     }
 
-    
+
     createRefund(data) {
         console.log("inside createRefund", data);
         return new Promise((resolve, reject) => {

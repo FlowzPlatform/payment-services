@@ -4,35 +4,68 @@ var customerId = {
 }
 
 module.exports = {
-    create: {
-        "properties": {
-            "gateway": {
-                "description": "gateway in string",
-                "type": "string",
-                "enum": ["stripe", "authdotnet"]
-            },
-            "amount": {
-                "description": "amount in Integer",
-                "type": "integer"
-            },
-            "currency": {
-                "description": "currency in string",
-                "type": "string",
-                "enum": ["usd", "inr"]
-            },
-            "customerId": customerId,
-            "description": {
-                "description": "description in string",
-                "type": "string"
-            },
-            "receipt_email": {
-                "description": "receipt_email in string",
-                "type": "string"
-            }
-        },
-        "required": ["gateway", "amount", "currency", "customerId"],
-        "additionalProperties": false
-    },
+  create: {
+     "properties": {
+         "gateway": {
+             "description": "gateway in string",
+             "type": "string",
+             "enum": ["stripe", "authdotnet"]
+         },
+         "amount": {
+             "description": "amount in Integer",
+             "type": "integer"
+         },
+         "currency": {
+             "description": "currency in string",
+             "type": "string",
+             "enum": ["usd", "inr"]
+         },
+          "description": {
+              "description": "description in string",
+             "type": "string",
+          },
+         "isCustomer": {
+             "description": "isCustomer in string",
+             "type": "boolean",
+         }
+      },
+     "required": ["gateway", "amount"],
+     "oneOf": [{
+             "type": "object",
+             "properties": {
+                 "customerId": {
+                     "description": "customerId in string",
+                     "type": "string"
+                 }
+             },
+             "required": ["customerId"]
+         },
+         {
+             "type": "object",
+             "properties": {
+                 "cardNumber": {
+                     "description": "card number in string",
+                     "type": "string"
+                 },
+                 "expMonth": {
+                     "description": "expiry month in String",
+                     "type": "string",
+                     "minLength": 2,
+                     "maxLength": 2
+                 },
+                 "expYear": {
+                     "description": "expiry year in String",
+                     "type": "string"
+                 },
+                 "cvc": {
+                     "description": "cvc in string",
+                     "type": "string"
+                 }
+             },
+             "required": ["cardNumber", "expMonth", "expYear", "cvc"]
+         }
+     ]
+ },
     get: {
         "properties": {
             "gateway": {

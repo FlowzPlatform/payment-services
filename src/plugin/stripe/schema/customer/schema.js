@@ -70,7 +70,7 @@ module.exports = {
         "required":["customer","gateway"],
          "additionalProperties": false
      },
-     
+
 
      get : {
         "properties": {
