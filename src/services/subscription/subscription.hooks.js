@@ -1,10 +1,9 @@
-// Application hooks that run for every service
-const logger = require('./hooks/logger');
+const func = require("../../../functions.js");
 
 module.exports = {
     before: {
         all: [
-            hook => before_all_service(hook)
+            hook => before_all_hook_subscription(hook)
         ],
         find: [],
         get: [],
@@ -15,7 +14,7 @@ module.exports = {
     },
 
     after: {
-        all: [logger()],
+        all: [],
         find: [],
         get: [],
         create: [],
@@ -25,7 +24,7 @@ module.exports = {
     },
 
     error: {
-        all: [logger()],
+        all: [],
         find: [],
         get: [],
         create: [],
@@ -35,8 +34,10 @@ module.exports = {
     }
 };
 
-function before_all_service(hook) {
 
-    module.exports.apiHeaders = this.apiHeaders;
-    
+before_all_hook_subscription = async hook => {
+    console.log("###########@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    func.validateGateway(hook);
 }
+
+
