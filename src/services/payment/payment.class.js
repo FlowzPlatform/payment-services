@@ -37,6 +37,7 @@ class Service {
 
     async create(data, params) {
         console.log("inside create", data);
+        let metadata = data.metadata;
         const schema1 = require("../../plugin/"+data.gateway+"/schema/payment/schema.js")
         let schemaName = schema1.create ;
         //this.validate(data);
@@ -45,6 +46,8 @@ class Service {
         const obj = require('../../plugin/' +data.gateway+ '/init.js');
         let paymentGateway = obj.initObject(appHooks.apiHeaders); // check Headers also
         response = await paymentGateway.createCharge(data);
+        console.log("response Created " , response);
+        response.metadata = metadata;
         return response;
     }
 
