@@ -13,7 +13,7 @@ module.exports = {
          },
          "amount": {
              "description": "amount in Integer",
-             "type": "integer"
+             "type": "number"
          },
          "currency": {
              "description": "currency in string",
