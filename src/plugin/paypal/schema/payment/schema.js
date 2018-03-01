@@ -32,7 +32,7 @@ var address = {
                     "normalization_status":{
                         "description": "first line of the address",
                         "enum":["UNKNOWN", "UNNORMALIZED_USER_PREFERRED", "NORMALIZED", "UNNORMALIZED"]
-                                      
+
                     },
                     "type":{
                         "description": "type of address",
@@ -47,7 +47,7 @@ var address = {
             }
 
 
-            
+
 
 module.exports = {
     create: {
@@ -186,7 +186,7 @@ module.exports = {
                             },
                             "total":{
                                 "description":"total amount charged",
-                                "type":"string"
+                                "type":"number"
 
                             },
                             "details":{
@@ -281,7 +281,7 @@ module.exports = {
                                 "enum": ["UNRESTRICTED","INSTANT_FUNDING_SOURCE","IMMEDIATE_PAY"]
                             }
                         }
-                        
+
                     },
                     "item_list":{
                         "type":"object",
@@ -408,5 +408,5 @@ module.exports = {
        "required": [ "gateway"],
        "additionalProperties":false
     },
-    
+
 }
