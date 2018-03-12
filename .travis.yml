@@ -9,6 +9,7 @@ branches:
   only:
   - master
   - develop
+  - staging
   - QA
 
 jobs:
@@ -27,6 +28,14 @@ jobs:
             docker images;
             docker tag payment_service_flowz:dev $DOCKER_USERNAME/payment_service_flowz:dev;
             docker push $DOCKER_USERNAME/payment_service_flowz:dev;
+        elif [ ${TRAVIS_BRANCH} = "staging" ]; then
+            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+            docker build -t payment_service_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER .;
+            docker tag payment_service_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER $DOCKER_USERNAME/payment_service_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER;
+            docker tag payment_service_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER $DOCKER_USERNAME/payment_service_flowz:staging;
+            docker images;
+            docker push $DOCKER_USERNAME/payment_service_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER;
+            docker push $DOCKER_USERNAME/payment_service_flowz:staging;
         else
             docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
             docker build -t payment_service_flowz:qa .;
@@ -52,8 +61,3 @@ notifications:
       - npaul@officebrain.com
     on_success: always
     on_failure: always
-    
-    
-    
-
-
