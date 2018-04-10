@@ -44,7 +44,7 @@ class Stripe {
         return new Promise((resolve, reject) => {
 
             this.stripe.charges.create({
-                amount: data.amount * 100,
+                amount: Math.round(data.amount * 100),
                 currency: data.currency,
                 description: data.description,
                 customer: data.customerId
@@ -67,7 +67,7 @@ class Stripe {
         return new Promise((resolve, reject) => {
 
             this.stripe.charges.create({
-                amount: data.amount * 100,
+                amount: Math.round(data.amount * 100),
                 currency: data.currency,
                 description: data.description ? data.description : '',
                 source: {
