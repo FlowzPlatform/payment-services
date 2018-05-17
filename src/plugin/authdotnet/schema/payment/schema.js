@@ -13,7 +13,7 @@ module.exports = {
             },
             "amount": {
                 "description": "amount in Integer",
-                "type": "integer"
+                "type": "number"
             },
             "isCustomer": {
                 "description": "isCustomer in string",
