@@ -25,70 +25,70 @@ class Stripe {
      * @param {*} data
      */
     createCharge(data) {
-       console.log("inside stripe docharge..");
-       //console.log(this.stripe);
-       let response;
-       if (data.isCustomer) {
-           response = this.chargeCustomer(data);
-       } else  {
-           response = this.chargeDirect(data);
-       }
-       return response;
-   }
+        console.log("inside stripe docharge..");
+        //console.log(this.stripe);
+        let response;
+        if (data.isCustomer) {
+            response = this.chargeCustomer(data);
+        } else {
+            response = this.chargeDirect(data);
+        }
+        return response;
+    }
 
 
 
     chargeCustomer(data) {
 
-       console.log("charge customer..");
-       return new Promise((resolve, reject) => {
+        console.log("charge customer..");
+        return new Promise((resolve, reject) => {
 
-           this.stripe.charges.create({
-               amount: data.amount,
-               currency: data.currency,
-               description: data.description,
-               customer: data.customerId
-           }, function(err, charge) {
-               // asynchronously called
-               if (err) {
-                   resolve(err)
-               } else {
-                   console.log(charge)
-                       //console.log('1212');
-                   resolve(charge)
-               }
-           });
-       });
-   }
+            this.stripe.charges.create({
+                amount: Math.round(data.amount * 100),
+                currency: data.currency,
+                description: data.description,
+                customer: data.customerId
+            }, function(err, charge) {
+                // asynchronously called
+                if (err) {
+                    resolve(err)
+                } else {
+                    console.log(charge)
+                        //console.log('1212');
+                    resolve(charge)
+                }
+            });
+        });
+    }
 
     chargeDirect(data) {
 
-       console.log("charge direct..");
-       return new Promise((resolve, reject) => {
+        console.log("charge direct..");
+        return new Promise((resolve, reject) => {
 
-           this.stripe.charges.create({
-               amount: data.amount,
-               currency: data.currency,
-               description: data.description ? data.description : '',
-               source: {
-                   "exp_month": data.expMonth,
-                   "exp_year": data.expYear,
-                   "number": data.cardNumber,
-                   "cvc": data.cvc,
-                   "object": "card"
-               }
-           }, function(err, charge) {
-               // asynchronously called
-               if (err) {
-                   resolve(err)
-               } else {
-                   console.log(charge)
-                       //console.log('1212');
-                   resolve(charge)
-               }
-           });
-       })
-   }
+            this.stripe.charges.create({
+                amount: Math.round(data.amount * 100),
+                currency: data.currency,
+                description: data.description ? data.description : '',
+                source: {
+                    "exp_month": data.expMonth,
+                    "exp_year": data.expYear,
+                    "number": data.cardNumber,
+                    "cvc": data.cvc,
+                    "object": "card"
+                }
+            }, function(err, charge) {
+                // asynchronously called
+                if (err) {
+                    resolve(err)
+                } else {
+                    console.log(charge)
+                        //console.log('1212');
+                    resolve(charge)
+                }
+            });
+        })
+    }
     getCharge(data) {
         console.log("inside getcharges...")
         console.log(1212);
@@ -102,15 +102,15 @@ class Stripe {
                     },
                     function(err, charges) {
 
-                       if(err){
-                        resolve(err);
-                       }else{
-                        resolve(charges);
-                       }
+                        if (err) {
+                            resolve(err);
+                        } else {
+                            resolve(charges);
+                        }
 
                         // asynchronously called
 
-                            //return charges;
+                        //return charges;
 
                     }
                 );
@@ -122,11 +122,11 @@ class Stripe {
 
 
                         if (err) {
-                          resolve(err)
+                            resolve(err)
                         } else {
-                          resolve(charge)
+                            resolve(charge)
                         }
-                            //return charge;
+                        //return charge;
 
                     }
                 );
@@ -186,9 +186,9 @@ class Stripe {
                 subscriptionList.created[filterByCreated] = createdAt
                 this.stripe.subscriptions.list(subscriptionList,
                     function(err, subscriptions) {
-                        if(err){
+                        if (err) {
                             resolve(err);
-                        }else{
+                        } else {
                             resolve(subscriptions);
                         }
                     }
@@ -200,9 +200,9 @@ class Stripe {
                 this.stripe.subscriptions.retrieve(
                     data.id,
                     function(err, plan) {
-                        if(err){
+                        if (err) {
                             resolve(err);
-                        }else{
+                        } else {
                             resolve(plan);
                         }
                     }
@@ -241,14 +241,14 @@ class Stripe {
 
             this.stripe.subscriptions.update(
                 subscriptionId,
-                data
-                , function(err, subscription) {
-                if (err) {
-                    resolve(err);
-                } else {
-                    resolve(subscription);
-                }
-            });
+                data,
+                function(err, subscription) {
+                    if (err) {
+                        resolve(err);
+                    } else {
+                        resolve(subscription);
+                    }
+                });
         })
 
 
@@ -260,11 +260,11 @@ class Stripe {
             this.stripe.subscriptions.del(
                 data.id,
                 function(err, confirmation) {
-                   if (err) {
-                    resolve(err);
-                } else {
-                    resolve(confirmation);
-                }
+                    if (err) {
+                        resolve(err);
+                    } else {
+                        resolve(confirmation);
+                    }
                 });
         });
     }
@@ -277,24 +277,24 @@ class Stripe {
         return new Promise((resolve, reject) => {
 
             if (!_.has(data, 'id') && _.has(data, 'gateway')) {
-                 this.stripe.customers.list({"limit":data.limit,"starting_after":data.starting_after} ,
+                this.stripe.customers.list({ "limit": data.limit, "starting_after": data.starting_after },
                     function(err, customers) {
-                          if (err) {
-                                resolve(err);
-                            } else {
-                                resolve(customers);
-                            }
+                        if (err) {
+                            resolve(err);
+                        } else {
+                            resolve(customers);
+                        }
                     });
             } else if (_.has(data, 'gateway') && _.has(data, 'id')) {
                 this.stripe.customers.retrieve(
                     data.id,
                     function(err, customer) {
                         console.log(customer);
-                         if (err) {
-                                resolve(err);
-                            } else {
-                                resolve(customer);
-                            }
+                        if (err) {
+                            resolve(err);
+                        } else {
+                            resolve(customer);
+                        }
                     });
             }
         })
@@ -324,10 +324,10 @@ class Stripe {
                     }, function(err, customer) {
                         customer.tok_id = token.id;
                         if (err) {
-                                resolve(err);
-                            } else {
-                                resolve(customer);
-                            }
+                            resolve(err);
+                        } else {
+                            resolve(customer);
+                        }
                     });
                 }
                 // synchronously called
@@ -350,10 +350,10 @@ class Stripe {
                 function(err, customer) {
                     // asynchronously called
                     if (err) {
-                            resolve(err);
-                        } else {
-                                resolve(customer);
-                        }
+                        resolve(err);
+                    } else {
+                        resolve(customer);
+                    }
                 });
         })
     }
@@ -364,11 +364,11 @@ class Stripe {
             this.stripe.customers.del(
                 data.id,
                 function(err, confirmation) {
-                      if (err) {
-                                resolve(err);
-                            } else {
-                                resolve(confirmation);
-                            }
+                    if (err) {
+                        resolve(err);
+                    } else {
+                        resolve(confirmation);
+                    }
                 });
         })
     }
@@ -397,14 +397,13 @@ class Stripe {
             }, function(err, plan) {
 
                 // asynchronously called
-                console.log("created plan ---- errrrr", err
-              );
+                console.log("created plan ---- errrrr", err);
 
 
                 if (err) {
-                  resolve (err)
-                }else {
-                  resolve (plan)
+                    resolve(err)
+                } else {
+                    resolve(plan)
                 }
 
 
@@ -430,7 +429,7 @@ class Stripe {
     getPlan(data) {
         return new Promise((resolve, reject) => {
             if (!_.has(data, 'id') && _.has(data, 'gateway')) {
-                this.stripe.plans.list({ "limit": data.limit , "starting_after": data.starting_after },
+                this.stripe.plans.list({ "limit": data.limit, "starting_after": data.starting_after },
                     function(err, plans) {
                         console.log("plans", plans);
                         resolve(plans);
@@ -440,8 +439,8 @@ class Stripe {
                     data.id,
                     function(err, plan) {
 
-                       if (err) {
-                        resolve(err);
+                        if (err) {
+                            resolve(err);
                         } else {
                             resolve(plan);
                         }
@@ -459,11 +458,11 @@ class Stripe {
             this.stripe.plans.update(data.id, {
                 name: data.name
             }, function(err, plan) {
-               if (err) {
-                        resolve(err);
-                        } else {
-                            resolve(plan);
-                        }
+                if (err) {
+                    resolve(err);
+                } else {
+                    resolve(plan);
+                }
             });
         })
     }
@@ -473,11 +472,11 @@ class Stripe {
             this.stripe.plans.del(
                 data.id,
                 function(err, confirmation) {
-                   if (err) {
+                    if (err) {
                         resolve(err);
-                        } else {
-                            resolve(confirmation);
-                        }
+                    } else {
+                        resolve(confirmation);
+                    }
                 });
         })
     }
@@ -491,48 +490,48 @@ class Stripe {
                 amount: data.amount,
                 reason: data.reason
             }, function(err, refund) {
-                if(err){
-                    console.log("error",err);
+                if (err) {
+                    console.log("error", err);
                     resolve(err);
-                }else{
-                    console.log("refund",refund);
+                } else {
+                    console.log("refund", refund);
                     resolve(refund);
                 }
             });
         })
     }
 
-     getRefund(data) {
+    getRefund(data) {
         console.log("inside getRefund...")
         return new Promise((resolve, reject) => {
 
             if (!_.has(data, 'id') && _.has(data, 'gateway')) {
-                console.log("check data",data);
+                console.log("check data", data);
                 this.stripe.refunds.list({
                         limit: data.limit,
                         starting_after: data.starting_after,
-                        charge:data.chargeId
+                        charge: data.chargeId
                     },
                     function(err, refunds) {
-                       if(err){
-                        resolve(err);
-                       }else{
-                        resolve(refunds);
-                       }
+                        if (err) {
+                            resolve(err);
+                        } else {
+                            resolve(refunds);
+                        }
                     }
                 );
             } else if (_.has(data, 'gateway') && _.has(data, 'id')) {
-                console.log("11",data);
+                console.log("11", data);
                 this.stripe.refunds.retrieve(
                     data.id,
                     function(err, refund) {
-                        if(err){
+                        if (err) {
                             resolve(err);
-                        }else{
+                        } else {
                             resolve(refund);
                         }
                     });
-                }
+            }
         })
     }
 
@@ -541,17 +540,17 @@ class Stripe {
         var refundId = data.id;
         delete data.gateway;
         delete data.id;
-        console.log("data",data);
+        console.log("data", data);
         console.log("inside update refund..");
-        return new Promise((resolve,reject) => {
+        return new Promise((resolve, reject) => {
             this.stripe.refunds.update(
-                refundId,data,
+                refundId, data,
                 function(err, refund) {
-                    if(err){
-                            resolve(err);
-                        }else{
-                            resolve(refund);
-                        }
+                    if (err) {
+                        resolve(err);
+                    } else {
+                        resolve(refund);
+                    }
                 });
         })
     }
